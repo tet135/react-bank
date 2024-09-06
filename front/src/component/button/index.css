@@ -1,0 +1,39 @@
+
+.button {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    
+    color: #fff;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    width: 100%;
+}
+
+.disabled {
+    cursor: default !important;
+    opacity: 0.5 !important;
+}
+
+.button--primary {
+    background-color: #775CE5;
+}
+
+.button--secondary {
+    background-color: #fff;
+    border-color: #775CE5;
+    color: #775CE5;
+}
+
+.button--logout {
+    background-color: #fff;
+    border-color: #f23152;
+    color:  #f23152;
+}
+
+.name {
+    color: #fff;
+    text-decoration: none;
+}

@@ -1,0 +1,6 @@
+.button-back {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+}

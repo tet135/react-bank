@@ -1,0 +1,35 @@
+
+.heading {
+    margin: 32px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.heading--welcome {
+    margin-bottom: 490px;
+    gap: 16px;
+}
+
+.title {
+    color: #121212;
+    font-size: 24px;
+    font-weight: 700;
+} 
+
+.title--welcome {
+    color: #ffff;
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.description {
+    color: #939199;
+    font-size: 12px;
+}
+
+.description--welcome {
+    color: #ffff;
+    font-size: 20px;
+}

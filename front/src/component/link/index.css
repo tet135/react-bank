@@ -1,0 +1,16 @@
+.link__container {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+
+    color: #121212;
+
+    
+    font-size: 14px;
+    width: 100%;
+}
+
+.link {
+    color: #775ce5;
+    text-decoration: underline ;
+}

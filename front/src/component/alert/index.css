@@ -1,0 +1,32 @@
+.alert {
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    color: #939199;
+    background-color: #eae9eb;
+    border-radius: 12px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.alert--disabled {
+    display: none;
+}
+
+
+.alert--success {
+    background-color: #e5fcf4;
+    color:  #13fdab;
+}
+
+.alert--progress {
+    background-color: #cec3f9;
+    color: #775CE5;
+}
+
+.alert--error {
+    background-color: #f2dfd2;
+    color:  #F2883D;
+}
+
+

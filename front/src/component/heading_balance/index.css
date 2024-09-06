@@ -1,0 +1,66 @@
+.balance__heading {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.description {
+    color: white;
+    font-size: 16px;
+}
+
+.balance__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.balance__container--gap {
+    gap: 32px;
+}
+
+.balance {
+    color: white;
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.balance__coins {
+    color: white;
+    font-size: 34px;
+}
+
+.img {
+    height:24px;
+    width: 24px;
+}
+
+.img--round {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background-color: #5B94E9;
+    border-radius: 50%;
+}
+
+.img--white {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 76px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.name {
+    color: black;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+}
