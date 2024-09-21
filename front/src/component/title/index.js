@@ -1,5 +1,5 @@
 import "./index.css";
 
-export default function Component({ children }) {
-  return <h1 className="title--center">{children}</h1>;
+export default function Component({ children, className = "" }) {
+  return <h2 className={`title ${className}`}>{children}</h2>;
 }

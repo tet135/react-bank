@@ -44,27 +44,32 @@ export const globalReducer = (globalState, action) => {
       // console.log("action.payload", action.payload); //ok, returns:    user: {email: 'test@mail.com', isConfirm: false}
       return {
         ...globalState,
+        token: action.payload.token, //ok
         user: {
-          email: action.payload.user.email, //action.payload містить дані з session
+          //чи треба нам тут id???
+          id: action.payload.user.id, //action.payload містить дані з session
+          email: action.payload.user.email,
           isConfirm: action.payload.user.isConfirm,
         },
-        token: action.payload.token, //ok
       };
     case REQUEST_ACTION_TYPE.LOGOUT:
       return {
         ...globalState,
-        user: null,
         token: null,
+        user: null,
       };
-    //де використовуэться???
-    // case REQUEST_ACTION_TYPE.UPDATE:
-    //   return {
-    //     ...globalState,
-    //     user: {
-    //       ...globalState.user,
-    //       ...action.payload,
-    //     },
-    //   };
+    //for formSettings
+    case REQUEST_ACTION_TYPE.UPDATE:
+      return {
+        ...globalState,
+        ...action.payload,
+        // token: action.payload.token,
+        // user: {
+        //   ...globalState.user,
+        //   email: action.payload.user.email,
+        //   id: action.payload.user.id, //action.payload містить дані з session
+        // },
+      };
     case REQUEST_ACTION_TYPE.CONFIRM:
       return {
         ...globalState,

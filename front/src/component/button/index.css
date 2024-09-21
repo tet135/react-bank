@@ -7,7 +7,7 @@
     color: #fff;
     border: 1px solid transparent;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     width: 100%;
 }
@@ -25,12 +25,16 @@
     background-color: #fff;
     border-color: #775CE5;
     color: #775CE5;
+
+    padding: 16px;
 }
 
 .button--logout {
     background-color: #fff;
     border-color: #f23152;
     color:  #f23152;
+
+    padding: 16px;
 }
 
 .name {

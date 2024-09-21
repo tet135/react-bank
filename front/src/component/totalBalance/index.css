@@ -1,0 +1,21 @@
+.total__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.total {
+    color: #1D1D1F;
+    font-size: 38px;
+    font-weight: bold;
+}
+
+.total--receipt,
+.total__coins--receipt {
+    color: #24B277 !important;
+}
+
+.total__coins {
+    color: #939199;
+    font-size: 38px;
+}

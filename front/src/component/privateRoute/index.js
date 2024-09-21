@@ -1,20 +1,16 @@
 import { useContext } from "react";
 import { AuthContext } from "../../App";
-
-import BalancePage from "../../page/balancePage";
+import { Navigate } from "react-router-dom";
 
 export default function Component({ children }) {
   const context = useContext(AuthContext);
-  // console.log("context in AuthContext", context);
-  // console.log(
-  //   "context.state.user.isConfirm, token in PrivatRoute",
-  //   context.state.token,
-  //   context.state.user.isConfirm
-  // );
 
-  return context.state.token && context.state.user.isConfirm === true ? (
-    <BalancePage />
-  ) : (
-    <>{children}</>
-  );
+  if (!context.state.user.isConfirm) {
+    if (!context.state.token) {
+      return <Navigate to="/" replace={true} />;
+    }
+    return <Navigate to="/signup-confirm" replace={true} />;
+  }
+
+  return <>{children}</>;
 }

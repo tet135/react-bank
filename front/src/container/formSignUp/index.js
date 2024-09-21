@@ -160,6 +160,7 @@ export default function Container({
         handleClick={handleSubmit}
         path={buttonPath}
         classModificator="primary"
+        disabled={disabled}
       >
         Continue
       </Button>

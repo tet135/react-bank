@@ -1,6 +1,9 @@
 export const FIELD_NANE = {
   EMAIL: "email",
+  EMAIL_NEW: "email_new",
   PASSWORD: "password",
+  PASSWORD_NEW: "password_new",
+  PASSWORD_OLD: "password_old",
   CODE: "code",
 };
 
@@ -22,4 +25,8 @@ export const ALERT = {
   RECOVERY: "Code was successfully send to you",
   SUCCESS_RECOVERY: "You password was successfully changed",
   SUCCESS_CONFIRM: "You account was successfully confirmed",
+  SUCCESS_LOGOUT:
+    "You are successfully loged out. Thank you for using out bank app!",
+  SUCCESS_EMAIL_CHANGED: "You email was changed",
+  SUCCESS_PASSWORD_CHANGED: "You password was changed",
 };

@@ -1,0 +1,95 @@
+.transaction__list{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.transaction__container {
+    text-decoration:  none;
+    
+    display: grid;
+    grid-template-columns: 48px 1fr 1fr;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.transaction__container:hover {
+    background-color: #F7F7F7;
+}
+
+.img_bg {
+    width: 48px;
+    height: 48px;
+    background-color: #F7F7F7;
+    border-radius: 50%;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transaction__info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: black;
+}
+
+.transaction__sender {
+    font-size: 16px;
+    font-weight: bold;
+    /* height for skeleton */
+    height: 16px;
+}
+
+.transaction__details {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: #939199;
+    height: 12px;
+}
+
+.transaction__data {
+    font-size: 12px;
+        /* height for skeleton */
+    height: 12px;
+}
+
+.transaction__data:not(:last-child)::after {
+    content: ' | ';
+    font-size: 12px;
+    /* font-weight: bold; */
+    /* text-transform: uppercase; */
+}
+   
+.transaction__sum {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 16px;
+    /* height for skeleton */
+    height: 16px;
+}
+
+.transaction__dollar {
+    color: #1D1D1F;
+    font-weight: 700;
+}
+
+.transaction__coins {
+    color: #939199;
+}
+
+.transaction__dollar--received,
+.transaction__coins--received {
+    color: #24B277 !important;
+}
+
+.transaction__dollar--received {
+    font-weight: 700;
+}

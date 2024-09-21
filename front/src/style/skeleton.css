@@ -1,0 +1,13 @@
+.skeleton {
+    animation: skeleton-animation 1s infinite alternate;
+    width: 50%;
+}
+
+@keyframes skeleton-animation {
+    from {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    to {
+        background-color: rgba(0, 0, 0, 0.15);
+    }
+}
