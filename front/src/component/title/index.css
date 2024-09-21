@@ -1,7 +1,13 @@
+.title {
+    font-size: 16px;
+    font-weight: 500;
+    color: black;
+}
+
 .title--center {
     position: absolute;
     text-align: center;
     font-size: 20px;
-    font-weight: 500;
-    color: black;
+
 }
+

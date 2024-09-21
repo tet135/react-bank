@@ -12,14 +12,14 @@ export const validate = (name, value) => {
     return FIELD_ERROR.IS_BIG;
   }
 
-  if (name === FIELD_NANE.EMAIL) {
+  if (name === FIELD_NANE.EMAIL || name === FIELD_NANE.EMAIL_NEW) {
     if (!REG_EXP_EMAIL.test(String(value))) {
       // console.log("validation email");
       return FIELD_ERROR.EMAIL;
     }
   }
 
-  if (name === FIELD_NANE.PASSWORD) {
+  if (name === FIELD_NANE.PASSWORD || name === FIELD_NANE.PASSWORD_NEW) {
     if (!REG_EXP_PASSWORD.test(String(value))) {
       // console.log("validation password");
       return FIELD_ERROR.PASSWORD;

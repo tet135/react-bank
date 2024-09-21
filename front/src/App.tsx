@@ -1,14 +1,16 @@
 import React, { createContext, useReducer } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import WellcomePage from './page/welcomePage'
+import WelcomePage from './page/welcomePage'
 import SignInPage from './page/signinPage'
 import SignUpPage from './page/signupPage'
 import SignupConfirmPage from './page/signupConfirmPage'
 import RecoveryPage from './page/recoveryPage'
 import RecoveryConfirmPage from './page/recoveryConfirmPage'
+import SettingsPage from './page/settingsPage'
 import BalancePage from './page/balancePage'
 import SendPage from './page/sendPage'
+import TransactionPage from './page/transactionPage'
 
 
 import AuthRoute from './component/authRoute'
@@ -44,8 +46,9 @@ function App() {
         <Routes>
           <Route index element={
             <AuthRoute>
-              <WellcomePage />
-            </AuthRoute>}/>
+              <WelcomePage />
+            </AuthRoute>
+          }/>
           
           <Route path="/signin" element={
             <AuthRoute>
@@ -60,9 +63,9 @@ function App() {
           <Route
             path="/signup-confirm"
             element={
-              <PrivateRoute>
+              // <PrivateRoute>
                 <SignupConfirmPage />
-              </PrivateRoute>
+              // </PrivateRoute>
             }/>
           <Route
             path="/recovery"
@@ -86,13 +89,27 @@ function App() {
                 <BalancePage />
               </PrivateRoute>
             }/>
-                      <Route
-            path="/send"
+          <Route
+            path="/transaction/:transactionId"
             element={
               <PrivateRoute>
-                <SendPage />
+                <TransactionPage />
               </PrivateRoute>
             }/>
+          <Route
+            path="/send"
+            element={
+              // <PrivateRoute>
+                <SendPage />
+              // </PrivateRoute>
+            }/>
+          <Route
+            path="/settings"
+              element={
+                // <PrivateRoute>
+                  <SettingsPage />
+                // </PrivateRoute>
+              }/>
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>

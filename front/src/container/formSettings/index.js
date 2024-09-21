@@ -1,11 +1,13 @@
 import "./index.css";
+import "../../style/click.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
 import Alert from "../../component/alert";
+import Title from "../../component/title";
+import Divider from "../../component/divider";
 
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../App";
 
@@ -19,18 +21,20 @@ import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
 
-export default function Container({ buttonPath }) {
+export default function Container({
+  newInput,
+  inputLabel,
+  toggle,
+  buttonText,
+  buttonPath,
+}) {
   const context = useContext(AuthContext);
 
-  //помилка при валідації інпута
   const [error, setError] = useState({});
 
-  //value -  це об'єкn з назвами інпутів та їх актуальними значеннями
   const [value, setValue] = useState({});
 
   const [disabled, setDisabled] = useState(true);
-
-  const navigate = useNavigate();
 
   const handleChangeInput = (event) => {
     const inputValue = event.target.value;
@@ -64,12 +68,12 @@ export default function Container({ buttonPath }) {
 
     // console.log("error", error);
 
-    checkDisabled(value, error, disabled, setDisabled);
+    checkDisabled(value, error, disabled, setDisabled, buttonText);
   };
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   const submit = async () => {
-    console.log("disabled in submit", disabled); //false
+    // console.log("disabled in submit", disabled); //false
     if (disabled === true) {
       // console.log("works disabled === true");
       validateAll(value, setDisabled);
@@ -77,55 +81,84 @@ export default function Container({ buttonPath }) {
     } else {
       // console.log(value); //ok returns   {email: 'test@mail.com', password: 'Dfgdf12d34'}
 
-      showAlert("progress", ALERT.PROGRESS); //ok
+      showAlert("progress", ALERT.PROGRESS, buttonText); //ok
 
-      //відправити дані реєстрації на бекенд - формуємо запит на сервер на реєстрацію користувача
+      console.log("value", value);
+      console.log("newInput", newInput);
+      console.log("value[newInput]", value[newInput]);
+
+      //відправити дані реєстрації на бекенд - формуємо запит на сервер на відновлення пошти
       try {
-        const res = await fetch(`http://localhost:4000/signup`, {
+        const res = await fetch(`http://localhost:4000/settings`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: value.email,
-            password: value.password,
+            // token: context.state.token,
+            // email: value.email,
+            // password: value.password,
+
+            token: context.state.token,
+
+            oldPassword: value.password_old,
+            changedInput: newInput,
+            changedData: value[newInput],
           }),
         });
 
         const data = await res.json();
-        //в data = створений Object юзер
-        // console.log("data == user?!", data); //ok
+        console.log("data.session", data.session); //undefined(((((((((((((())))))))))))))
 
         if (res.ok) {
           // console.log("res.ok");
-          showAlert("success", ALERT.SUCCESS);
+          if (newInput === FIELD_NANE.EMAIL_NEW) {
+            showAlert("success", ALERT.SUCCESS_EMAIL_CHANGED);
 
-          // alert(data.session.token);
-          // console.log("data.session.user", data.session.user); //ok
+            // showAlert(
+            //   "success",
+            //   ALERT.SUCCESS_EMAIL_CHANGED,
+            //   `alert-${buttonText}`
+            // );
 
-          //зберегли сесію
-          saveSession(data.session);
+            //записали user в AuthContext//data={token, user: {email, isConfirm}}
+            updateGlobalState(
+              REQUEST_ACTION_TYPE.UPDATE,
+              data.session,
+              context
+            );
+            //зберегли сесію
+            saveSession(data.session);
+            //прибрали алерт
+            // setTimeout(showAlert(), 3000);
+          }
 
-          //записали user в AuthContext//data={token, user: {email, isConfirm}}
-          updateGlobalState(REQUEST_ACTION_TYPE.LOGIN, data.session, context);
+          if (newInput === FIELD_NANE.PASSWORD_NEW) {
+            showAlert("success", ALERT.SUCCESS_PASSWORD_CHANGED);
 
-          //перейти на сторінку '/signup-confirm'
-          // navigate("/signup-confirm");
-          setTimeout(() => navigate("/signup-confirm"), 3000);
-
-          // window.location.assign("/signup-confirm") //ok
+            // showAlert(
+            //   "success",
+            //   ALERT.SUCCESS_PASSWORD_CHANGED,
+            //   `alert-${buttonText}`
+            // );
+            //прибрали алерт
+            // setTimeout(showAlert(), 3000);
+          }
 
           // //очистити поля! після відправки форми
           // if (isSubmitted) {
-          //   const inputs = document.querySelectorAll("input");
-          //   console.log(inputs);
-          //   inputs.values("");
+          // const inputs = document.querySelectorAll("input");
+          // console.log(inputs); //returns 4 inputs
+          // inputs.values("");
+
           // }
         } else {
+          showAlert("error", data.message, `alert-${buttonText}`);
           showAlert("error", data.message);
         }
       } catch (err) {
         showAlert("error", err.message);
+        // showAlert("error", err.message, `alert-${buttonText}`);
       }
     }
   };
@@ -136,27 +169,34 @@ export default function Container({ buttonPath }) {
 
   return (
     <form className="form">
+      <Title>Change email</Title>
       <Input
         handleChangeInput={handleChangeInput}
-        label="Email"
+        label="Old password"
+        placeholder="password"
+        name={FIELD_NANE.PASSWORD_OLD}
+        toggle={true}
+      />
+      <Input
+        handleChangeInput={handleChangeInput}
+        label={inputLabel}
         placeholder="example@gmail.com"
-        name={FIELD_NANE.EMAIL}
+        name={newInput}
+        toggle={toggle}
       />
-      <Input
-        handleChangeInput={handleChangeInput}
-        label="Sum"
-        placeholder="$100"
-        name={FIELD_NANE.SUM}
-      />
+
       <Button
         handleClick={handleSubmit}
         path={buttonPath}
-        classModificator="primary"
+        classModificator="secondary"
+        id={buttonText}
         disabled={disabled}
       >
-        Send
+        {buttonText}
       </Button>
       <Alert />
+      {/* <Alert id={`alert-${buttonText}`} /> */}
+      <Divider />
     </form>
   );
 }

@@ -12,11 +12,11 @@ export default function Container() {
             <Heading title={"Hello!"} description={"Welcome to bank app"} styleWelcome="welcome"/>
 
             <Link to="signup" style={{ width: "100%", textDecoration: "none" }}>
-                <Button classModificator="primary" disabled="">Sign Up</Button>
+                <Button classModificator="primary" disabled={false}>Sign Up</Button>
             </Link>
             
             <Link to="signin" style={{ width: "100%", textDecoration: "none" }}>
-                <Button classModificator="secondary" disabled="">Sign In</Button>
+                <Button classModificator="secondary" disabled={false}>Sign In</Button>
             </Link>
             
         </Page>

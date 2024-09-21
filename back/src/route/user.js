@@ -11,11 +11,18 @@ const { Session } = require('../class/session')
 const testUser = User.createUser(
   'test@gmail.com',
   'A123aaaaa',
-  false,
+  true,
+)
+
+const testUser2 = User.createUser(
+  'test2@gmail.com',
+  'S123sssss',
+  true,
 )
 
 // console.log('testov user', testUser)
 
+// ++++++++++++++++++++
 router.post('/signup', function (req, res) {
   try {
     const {

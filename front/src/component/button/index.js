@@ -5,14 +5,18 @@ export default function Component({
   children,
   classModificator,
   handleClick,
-  disabled = "disabled",
+  disabled = true,
+  id,
 }) {
   return (
     <button
       onClick={handleClick}
-      className={`button button--${classModificator} click ${disabled}`}
+      className={`button button--${classModificator} ${
+        disabled ? "disabled" : ""
+      }  click`}
       type="button"
-      id="button"
+      id={id}
+      disabled={disabled}
     >
       {children}
     </button>

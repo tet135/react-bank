@@ -84,7 +84,7 @@ export default function Container({ buttonPath }) {
             [FIELD_NANE.CODE]: Number(value[FIELD_NANE.CODE]),
             token: getTokenSession(),
 
-            // token: context.token,
+            // token: context.state.token,
           }),
         });
 
@@ -134,6 +134,7 @@ export default function Container({ buttonPath }) {
         handleClick={handleSubmit}
         path={buttonPath}
         classModificator="primary"
+        disabled={disabled}
       >
         Confirm
       </Button>

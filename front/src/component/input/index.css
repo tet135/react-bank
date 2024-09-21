@@ -23,7 +23,7 @@
 .input {
     display: flex;
     justify-content: flex-start;
-    padding: 20px 16px;
+    padding: 16px;
     border: 1px solid #939199;
     border-radius: 12px;
     width: 100%;

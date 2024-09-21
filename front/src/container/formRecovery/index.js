@@ -118,6 +118,7 @@ export default function Container({ buttonPath }) {
         handleClick={handleSubmit}
         path={buttonPath}
         classModificator="primary"
+        disabled={disabled}
       >
         Continue
       </Button>

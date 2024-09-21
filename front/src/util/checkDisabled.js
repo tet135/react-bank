@@ -1,5 +1,11 @@
 // перевіряє всі інпути і перемальовує кнопку
-export const checkDisabled = (value, error, disabled, setDisabled) => {
+export const checkDisabled = (
+  value,
+  error,
+  disabled = true,
+  setDisabled,
+  id
+) => {
   Object.keys(value).forEach((name) => {
     setDisabled(false);
     //value[name] === "undefined" - коли значення не введене
@@ -11,9 +17,16 @@ export const checkDisabled = (value, error, disabled, setDisabled) => {
   });
   // console.log("disabled after checkDisabled", disabled);
 
+  //знаходимо кнопку
+  let button = null;
+  if (id) {
+    button = document.querySelector(`#${id}`);
+  } else {
+    button = document.querySelector(".button");
+  }
   //робимо кнопку активною
-  const button = document.querySelector(".button");
   if (button) {
     button.classList.toggle("disabled", Boolean(disabled));
+    button.disabled = Boolean(disabled);
   }
 };
