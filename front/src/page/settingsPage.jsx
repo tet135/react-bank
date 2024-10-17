@@ -10,7 +10,9 @@ import { useContext } from "react";
 
 import { AuthContext } from "../App";
 import { updateGlobalState } from '../util/updateGlobalState';
-import { REQUEST_ACTION_TYPE } from "../util/glogalReducer";
+import { REQUEST_ACTION_TYPE } from "../util/globalReducer";
+
+import { saveSession } from "../util/session";
 
 
 
@@ -18,12 +20,15 @@ export default function Container() {
     const context = useContext(AuthContext);
     const navigate = useNavigate();
     const handleLogout = () => {
+
+        //зберегли сесію
+        saveSession(null);
         
         //записали user в AuthContext//data={token, user: {email, isConfirm}}
         updateGlobalState(REQUEST_ACTION_TYPE.LOGOUT, null, context);
 
         //перейти на сторінку '/'
-       navigate("/logout");
+       navigate("/");
        
     }
     return (

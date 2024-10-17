@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
 import "./index.css";
 import click from "../../style/click.css";
 import { Fragment } from "react";
+import { Link } from "react-router-dom";
+import TotalBalance from "../totalBalance";
 
 export default function Component() {
   return (
@@ -23,11 +24,7 @@ export default function Component() {
           />
         </Link>
       </div>
-      <div className="balance__container">
-        <span className="balance">$</span>
-        <h1 className="balance">100</h1>
-        <span className="balance__coins">.20</span>
-      </div>
+      <TotalBalance type="Sending" sum="20" sumCoins="30" />
       <div className="balance__container balance__container--gap">
         <Link to="http://localhost:3000/receive">
           <div className="img--white">
@@ -39,7 +36,7 @@ export default function Component() {
               />
             </div>
           </div>
-          <p className="name">receive</p>
+          <p className="sign">receive</p>
         </Link>
         <Link to="http://localhost:3000/send">
           <div className="img--white">
@@ -47,7 +44,7 @@ export default function Component() {
               <img src="/../../../svg/send.svg" className="img" alt="send" />
             </div>
           </div>
-          <p className="name">send</p>
+          <p className="sign">send</p>
         </Link>
       </div>
     </Fragment>

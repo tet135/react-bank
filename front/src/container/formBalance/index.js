@@ -5,72 +5,73 @@ import "../../style/skeleton.css";
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../App";
 
+import { SRC, STATE } from "../../util/configConsts";
+
 export default function Component() {
   const context = useContext(AuthContext);
-  console.log("context.state.token", context.state.token);
-
-  const STATE = {
-    LOADING: "loading",
-    SUCCESS: "success",
-    ERROR: "error",
-  };
-
-  const SRC = {
-    STRIPE: "/../../../img/stripe.png",
-    COINBASE: "/../../../img/coinbase.png",
-    SENDER: "/../../../svg/sender.svg",
-  };
 
   const [status, setStatus] = useState(null);
   const [data, setData] = useState(null);
-  // console.log("data", data);
 
   //перемальовуэ зовнійній вигляд в залежності від status
   //враховує status, змінює вигляд element через зміну innerHTML
   const updateView = (status, data) => {
+    const elSum = document.querySelector(".total__container");
+    // console.log("total__container", elSum); //ok
+    if (!elSum) throw new Error("elSum is null");
+
+    // <TotalBalance sum=${data.sum.dollars} sumCoins=${data.sum.coins} />
+
+    elSum.innerHTML = ``;
+
     const element = document.querySelector(".transaction__list");
     // console.log("element", element); //ok
     if (!element) throw new Error("Element is null");
 
     element.innerHTML = "";
-    // console.log("status", status);
-    // console.log("data", data);
 
     switch (status) {
       case STATE.LOADING:
+        elSum.innerHTML = `
+        <div class="total skeleton"></div>
+        `;
+
         element.innerHTML = `
-        <div class="transaction__container">
-          <div class="img_bg skeleton"></div>
-          <div class="transaction__info">
-            <p class="transaction__sender skeleton"></p>
-            <div class="transaction__details skeleton"></div>
+        <div class="card__container">
+          <div class="card__img_bg skeleton"></div>
+          <div class="card_info">
+            <p class="card__name skeleton"></p>
+            <div class="card__details skeleton"></div>
           </div>
           <div class="transaction__sum skeleton"></div>
         </div>
 
-        <div class="transaction__container">
-          <div class="img_bg skeleton"></div>
-          <div class="transaction__info">
-            <p class="transaction__sender skeleton"></p>
-            <div class="transaction__details skeleton"></div>
+        <div class="card__container">
+          <div class="card__img_bg skeleton"></div>
+          <div class="card__info">
+            <p class="card__name skeleton"></p>
+            <div class="card__details skeleton"></div>
           </div>
           <div class="transaction__sum skeleton"></div>
         </div>
             `;
         break;
       case STATE.SUCCESS:
-        data.list.forEach((item) => {
-          element.innerHTML += `
-          <a href="/transaction/${
-            item.id
-          }" class="transaction__container click">
-            <div class="img_bg">
+        elSum.innerHTML = `
+        <div class="total">${data.sum.sign}$${data.sum.dollars}</div>
+        <div class="total__coins">.${data.sum.coins}</div>
+        `;
+
+        data.list &&
+          data.list.forEach((item) => {
+            element.innerHTML += `
+          <a href="/transaction/${item.id}" class="card__container click">
+            <div class="card__img_bg">
               <img
-                class="transaction__img"
                 src="${
-                  item.type === "Sending"
+                  item.payment_system === null
                     ? SRC.SENDER
-                    : item.author === "Coinbase"
+                    : item.payment_system === "Coinbase"
                     ? SRC.COINBASE
                     : SRC.STRIPE
                 }"
@@ -79,14 +80,16 @@ export default function Component() {
                 height={18}
               />
             </div>
-            <div class="transaction__info">
-              <p class="transaction__sender">${item.author}</p>
+            <div class="card__info">
+              <p class="card__name">${
+                item.payment_system || item.recipient_email
+              }</p>
 
-              <div class="transaction__details">
-                <span class="transaction__data">
+              <div class="card__details">
+                <span class="card__data">
                   ${item.date.hours}:${item.date.minutes}
                 </span>
-                <span class="transaction__data">${item.type}</span>
+                <span class="card__data">${item.type}</span>
               </div>
             </div>
             <div class="transaction__sum">
@@ -108,11 +111,18 @@ export default function Component() {
             </div>
           </a>
           `;
-        });
+          });
         break;
       case STATE.ERROR:
+        elSum.innerHTML = `<div class="total"></div>`;
+
+        if (data.message === "You have no transactions yet") {
+          elSum.innerHTML = `<div class="total">$0</div>
+        `;
+        }
+
         element.innerHTML = `
-          <div class="transaction__sender">${data.message}</div>
+          <div class="card__name">${data.message}</div>
           `;
         break;
       default:
@@ -122,8 +132,21 @@ export default function Component() {
 
   //конвертуэ дні, що надходять з бекенду в фронтенд-вигляд
   const convertData = (data) => {
+    let total = Number(data.sum).toFixed(2);
+
+    const isMinus = total.toString().slice(0, 1);
+
+    if (isMinus === "-") {
+      total = total.toString().slice(1);
+    }
+
     return {
       ...data,
+      sum: {
+        sign: isMinus === "-" ? "-" : "",
+        dollars: Math.trunc(total),
+        coins: total.split(".")[1],
+      },
       list: data.list.map((item) => ({
         ...item,
         date: {
@@ -132,10 +155,7 @@ export default function Component() {
         },
         amount: {
           dollars: Math.trunc(Number(item.amount)),
-          coins: Math.trunc(
-            (Number(item.amount).toFixed(2) - Math.trunc(Number(item.amount))) *
-              100
-          ),
+          coins: Number(item.amount).toFixed(2).toString().split(".")[1],
         },
       })),
     };
@@ -153,13 +173,16 @@ export default function Component() {
         `http://localhost:4000/balance-data?token=${context.state.token}`,
         {
           method: "GET",
+          // headers: {
+          //   Authorization: `Bearer ${context.state.token}`,
+          // },
         }
       );
 
       const data = await res.json();
 
       //в data = створений Object transaction
-      // console.log("data.list == id, author, type, date, amount", data.list); //ok
+      console.log("data = data.sum, data.list", data); //ok
 
       if (res.ok) {
         setStatus(STATE.SUCCESS);
@@ -183,5 +206,5 @@ export default function Component() {
     loadTransactionsList();
   }, []);
 
-  return <div className="transaction__list"></div>;
+  return <div className="transaction__list card__list"></div>;
 }

@@ -1,5 +1,6 @@
 import "./index.css";
 import "../../style/click.css";
+import "../../style/disabled.css";
 
 export default function Component({
   children,

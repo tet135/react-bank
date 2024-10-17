@@ -1,0 +1,60 @@
+.item__container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+    border-radius: 12px;
+    width: 100%;
+    color: #1D1D1F;
+    background-color: white;
+    font-size: 14px;
+}
+
+.item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+        /* height for skeleton */
+        height: 14px;
+}
+
+.item__data {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.divider {
+    height: 1px;
+    width: 100%;
+    border: none;
+    background-color: #E9E8EB;
+
+    margin: 0;
+    display: block;
+}
+
+.item__amount {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: #1D1D1F;
+}
+
+.item__dollars {
+    color: #1D1D1F;
+    font-size: 38px;
+    font-weight: bold;
+        /* height for skeleton */
+    height: 38px;
+    width: 100%;
+}
+
+.item__coins {
+    color: #939199;
+    font-size: 38px;
+}
+
+.item__dollars--receipt,
+.item__coins--receipt {
+    color: #24B277 !important;
+}

@@ -1,4 +1,5 @@
 import "./index.css";
+import "../../style/form.css";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

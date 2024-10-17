@@ -1,5 +1,6 @@
 import "./index.css";
 import "../../style/click.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
@@ -16,7 +17,7 @@ import { validate } from "../../util/validate";
 import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
-import { REQUEST_ACTION_TYPE } from "../../util/glogalReducer";
+import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
@@ -83,10 +84,6 @@ export default function Container({
 
       showAlert("progress", ALERT.PROGRESS, buttonText); //ok
 
-      console.log("value", value);
-      console.log("newInput", newInput);
-      console.log("value[newInput]", value[newInput]);
-
       //відправити дані реєстрації на бекенд - формуємо запит на сервер на відновлення пошти
       try {
         const res = await fetch(`http://localhost:4000/settings`, {
@@ -95,10 +92,6 @@ export default function Container({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            // token: context.state.token,
-            // email: value.email,
-            // password: value.password,
-
             token: context.state.token,
 
             oldPassword: value.password_old,
@@ -108,7 +101,7 @@ export default function Container({
         });
 
         const data = await res.json();
-        console.log("data.session", data.session); //undefined(((((((((((((())))))))))))))
+        console.log("data.session", data.session);
 
         if (res.ok) {
           // console.log("res.ok");
@@ -135,6 +128,14 @@ export default function Container({
 
           if (newInput === FIELD_NANE.PASSWORD_NEW) {
             showAlert("success", ALERT.SUCCESS_PASSWORD_CHANGED);
+
+            updateGlobalState(
+              REQUEST_ACTION_TYPE.UPDATE,
+              data.session,
+              context
+            );
+
+            saveSession(data.session);
 
             // showAlert(
             //   "success",

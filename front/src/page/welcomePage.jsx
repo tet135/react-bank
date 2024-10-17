@@ -9,7 +9,7 @@ export default function Container() {
 
     return (
         <Page background='welcome'>
-            <Heading title={"Hello!"} description={"Welcome to bank app"} styleWelcome="welcome"/>
+            <Heading title="Hello!" description="Welcome to bank app" styleWelcome="welcome"/>
 
             <Link to="signup" style={{ width: "100%", textDecoration: "none" }}>
                 <Button classModificator="primary" disabled={false}>Sign Up</Button>

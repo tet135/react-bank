@@ -19,9 +19,8 @@
 } 
 
 .title--welcome {
-    color: #ffff;
-    font-size: 42px;
-    font-weight: 700;
+    color: #ffff !important;
+    font-size: 42px !important;
 }
 
 .description {

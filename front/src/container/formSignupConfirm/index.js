@@ -1,4 +1,5 @@
 import "./index.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
@@ -18,10 +19,11 @@ import { changeInputOnError } from "../../util/changeInputOnError";
 import { saveSession, getTokenSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
 
-import { REQUEST_ACTION_TYPE } from "../../util/glogalReducer";
+import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
 
 export default function Container({ buttonPath }) {
   const context = useContext(AuthContext);
+  console.log("context in signupConfirm", context);
 
   const [error, setError] = useState({});
   const [value, setValue] = useState({});
@@ -34,10 +36,10 @@ export default function Container({ buttonPath }) {
     const inputName = event.target.name;
     // console.log("inputValue", "inputName", inputName, inputValue);//ok
     setValue({ ...value, [inputName]: inputValue });
-    // console.log("value", value); //ok, але відображає дані - один символ((((((((((()))))))))))
+    // console.log("value", value); //ok
 
     // validation();
-    const inputError = validate(inputName, inputValue); //текст помилки або underfined(=немаэ помилки
+    const inputError = validate(inputName, inputValue); //текст помилки або underfined(=немаэ помилки)
     // console.log("inputError", inputError);
 
     if (Boolean(inputError)) {
@@ -69,7 +71,7 @@ export default function Container({ buttonPath }) {
       // console.log("works disabled === true");
       validateAll(value, setDisabled);
     } else {
-      // console.log(value); //ok returns code
+      // console.log(value); //ok, returns code
 
       showAlert("progress", ALERT.PROGRESS); //ok
 
@@ -82,27 +84,27 @@ export default function Container({ buttonPath }) {
           },
           body: JSON.stringify({
             [FIELD_NANE.CODE]: Number(value[FIELD_NANE.CODE]),
-            token: getTokenSession(),
+            // token: getTokenSession(),
 
-            // token: context.state.token,
+            token: context.state.token,
           }),
         });
 
         const data = await res.json();
-        // console.log("data in sighup-confirm", data); // {message, session}
+        console.log("data in sighup-confirm", data); // {message, session}
 
         if (res.ok) {
-          // console.log("res.ok");
+          console.log("res.ok");
           showAlert("success", ALERT.SUCCESS_CONFIRM);
 
           //зберегли сесію
           saveSession(data.session);
 
-          //перейти на сторінку '/balance'
-          setTimeout(() => navigate("/balance"), 3000);
-
           //записали user в AuthContext//data={token, user: {email, isConfirm}}
           updateGlobalState(REQUEST_ACTION_TYPE.CONFIRM, data.session, context);
+
+          //перейти на сторінку '/balance'
+          setTimeout(() => navigate("/balance"), 3000);
         } else {
           showAlert("error", data.message);
         }

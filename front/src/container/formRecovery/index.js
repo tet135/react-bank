@@ -1,4 +1,5 @@
 import "./index.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";

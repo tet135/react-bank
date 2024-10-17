@@ -1,4 +1,5 @@
 import "./index.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
@@ -15,7 +16,7 @@ import { validate } from "../../util/validate";
 import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
-import { REQUEST_ACTION_TYPE } from "../../util/glogalReducer";
+import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";

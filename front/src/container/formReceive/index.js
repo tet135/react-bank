@@ -1,9 +1,10 @@
 import "./index.css";
 import "../../style/form.css";
 
-import Button from "../../component/button";
+import ButtonPaySystem from "../../component/buttonPaySystem";
 import Input from "../../component/input";
 import Alert from "../../component/alert";
+import Divider from "../../component/divider";
 
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +18,7 @@ import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 
-export default function Container({ buttonPath }) {
+export default function Container() {
   const context = useContext(AuthContext);
   console.log("context in Send form", context);
 
@@ -68,26 +69,26 @@ export default function Container({ buttonPath }) {
   };
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  const submit = async () => {
+  const submit = async (e) => {
     if (disabled === true) {
       validateAll(value, setDisabled);
       //ще показати поле, яке треба заповнити?!
     } else {
-      console.log(value); //ok returns   {email: 'test@mail.com', password: 'Dfgdf12d34'}
+      console.log(value); //ok
 
       showAlert("progress", ALERT.PROGRESS); //ok
 
       //відправити дані реєстрації на бекенд - формуємо запит на сервер на реєстрацію користувача
       try {
         const res = await fetch(
-          `http://localhost:4000/send?token=${context.state.token}`,
+          `http://localhost:4000/receive?token=${context.state.token}`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              email: value.email,
+              payment_system: e.target.name,
               amount: value.amount,
             }),
           }
@@ -100,7 +101,7 @@ export default function Container({ buttonPath }) {
           // console.log("res.ok");
           showAlert("success", ALERT.TRANSACTION);
 
-          setTimeout(() => navigate("/balance"), 2000);
+          setTimeout(() => navigate("/balance"), 3000);
         } else {
           showAlert("error", data.message);
         }
@@ -110,32 +111,31 @@ export default function Container({ buttonPath }) {
     }
   };
 
-  const handleSending = (e) => {
-    submit();
+  const handleReceive = (e) => {
+    submit(e);
   };
 
   return (
     <form className="form">
       <Input
         handleChangeInput={handleChangeInput}
-        label="Email"
-        placeholder="example@gmail.com"
-        name={FIELD_NANE.EMAIL}
-      />
-      <Input
-        handleChangeInput={handleChangeInput}
-        label="Sum"
+        label="Receive amount"
         placeholder="$100"
         name={FIELD_NANE.SUM}
       />
-      <Button
-        handleClick={handleSending}
-        path={buttonPath}
-        classModificator="primary"
+      <Divider />
+      <div className="label">Payment system</div>
+      <ButtonPaySystem
+        handleClick={handleReceive}
         disabled={disabled}
-      >
-        Send
-      </Button>
+        text={"Stripe"}
+      ></ButtonPaySystem>
+
+      <ButtonPaySystem
+        handleClick={handleReceive}
+        disabled={disabled}
+        text={"Coinbase"}
+      ></ButtonPaySystem>
       <Alert />
     </form>
   );

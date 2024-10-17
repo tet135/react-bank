@@ -5,6 +5,7 @@ export const FIELD_NANE = {
   PASSWORD_NEW: "password_new",
   PASSWORD_OLD: "password_old",
   CODE: "code",
+  SUM: "amount",
 };
 
 export const FIELD_ERROR = {
@@ -14,6 +15,7 @@ export const FIELD_ERROR = {
   PASSWORD:
     "The password must consist of 8 or more characters, including lower and upper case letters, and at least one number",
   CODE: "Enter the number you have received!",
+  SUM: "Enter amount of money you want to send",
 };
 
 export const ALERT = {
@@ -29,4 +31,23 @@ export const ALERT = {
     "You are successfully loged out. Thank you for using out bank app!",
   SUCCESS_EMAIL_CHANGED: "You email was changed",
   SUCCESS_PASSWORD_CHANGED: "You password was changed",
+  TRANSACTION: "Transaction was successful",
+};
+
+export const STATE = {
+  LOADING: "loading",
+  SUCCESS: "success",
+  ERROR: "error",
+};
+
+export const SRC = {
+  STRIPE: "/../../../img/stripe.png",
+  COINBASE: "/../../../img/coinbase.png",
+  SENDER: "/../../../svg/sender.svg",
+
+  STRIPE_PAY: "/../../../img/stripe_icons.png",
+  COINBASE_PAY: "/../../../img/coinbase_icons.png",
+
+  WARNING: "/../../../svg/warning.svg",
+  ANNOUNCEMENT: "/../../../svg/announcement.svg",
 };

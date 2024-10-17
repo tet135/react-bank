@@ -1,0 +1,32 @@
+
+.pay_system {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    
+    color: black;
+    border: 1px solid #939199;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    width: 100%;
+    background-color: #fff;
+}
+
+.pay_system__container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.pay_system__bg {
+    width: 48px;
+    height: 48px;
+    background-color: #F7F7F7;
+    border-radius: 50%;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

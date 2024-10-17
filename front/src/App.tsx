@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from "react";
+import { createContext, useReducer } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import WelcomePage from './page/welcomePage'
@@ -10,7 +10,10 @@ import RecoveryConfirmPage from './page/recoveryConfirmPage'
 import SettingsPage from './page/settingsPage'
 import BalancePage from './page/balancePage'
 import SendPage from './page/sendPage'
+import ReceivePage from './page/receivePage'
 import TransactionPage from './page/transactionPage'
+import NotificationsPage from './page/notificationsPage'
+import Error from './page/errorPage'
 
 
 import AuthRoute from './component/authRoute'
@@ -24,7 +27,7 @@ import PrivateRoute from './component/privateRoute'
 //   // }
 // }
 
-import { initGlobalState, globalReducer } from "./util/glogalReducer"
+import { initGlobalState, globalReducer } from "./util/globalReducer"
 
 
 export const AuthContext = createContext({})
@@ -49,11 +52,12 @@ function App() {
               <WelcomePage />
             </AuthRoute>
           }/>
-          
-          <Route path="/signin" element={
-            <AuthRoute>
-              <SignInPage />
-            </AuthRoute>}/>
+          <Route 
+            path="/signin"
+            element={
+              <AuthRoute>
+                <SignInPage />
+              </AuthRoute>}/>
 
           <Route path="/signup" element={
             <AuthRoute>
@@ -63,9 +67,9 @@ function App() {
           <Route
             path="/signup-confirm"
             element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <SignupConfirmPage />
-              // </PrivateRoute>
+              </PrivateRoute>
             }/>
           <Route
             path="/recovery"
@@ -90,26 +94,41 @@ function App() {
               </PrivateRoute>
             }/>
           <Route
-            path="/transaction/:transactionId"
+            path="/notifications"
+              element={
+                <PrivateRoute>
+                  <NotificationsPage />
+                </PrivateRoute>
+              }/>
+          <Route
+            path="/receive"
             element={
               <PrivateRoute>
-                <TransactionPage />
+                <ReceivePage />
               </PrivateRoute>
             }/>
           <Route
             path="/send"
             element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <SendPage />
-              // </PrivateRoute>
+              </PrivateRoute>
             }/>
           <Route
             path="/settings"
               element={
-                // <PrivateRoute>
+                <PrivateRoute>
                   <SettingsPage />
-                // </PrivateRoute>
+                </PrivateRoute>
               }/>
+          <Route
+            path="/transaction/:transactionId"
+            element={
+              // <PrivateRoute>
+                <TransactionPage />
+              // </PrivateRoute>
+              }/>
+          <Route path="*" element={<Error/>} />
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>

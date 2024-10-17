@@ -5,30 +5,31 @@ class Alltransaction {
   static #list = []
 
   ///не ставити в конструкторі коми!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  constructor(email) {
+  constructor(email, transactions) {
     this.email = email
-    this.transactions = Transaction.getList(email)
+    this.transactions = transactions
   }
 
-  static create = (email) => {
-    const all_transaction = new Alltransaction(email)
+  static create = (email, transactions) => {
+    const user_transactions = new Alltransaction(
+      email,
+      transactions,
+    )
 
-    this.#list.push(all_transaction)
+    this.#list.push(user_transactions)
 
-    return all_transaction
+    console.log('list of all transactions', this.#list)
+
+    return user_transactions
   }
 
   static get = (email) => {
     return (
       this.#list.find(
-        (transactionList) =>
-          transactionList.email === email,
+        (transactionsList) =>
+          transactionsList.email === email,
       ) || null
     )
-  }
-
-  static getList = () => {
-    return this.#list
   }
 }
 

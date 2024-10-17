@@ -1,0 +1,4 @@
+.disabled {
+    cursor: default !important;
+    opacity: 0.5 !important;
+}

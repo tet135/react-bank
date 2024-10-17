@@ -1,4 +1,5 @@
 import "./index.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
@@ -15,7 +16,7 @@ import { validate } from "../../util/validate";
 import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
-import { REQUEST_ACTION_TYPE } from "../../util/glogalReducer";
+import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
@@ -75,7 +76,6 @@ export default function Container({
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   const submit = async () => {
-    console.log("disabled in submit", disabled); //false
     if (disabled === true) {
       // console.log("works disabled === true");
       validateAll(value, setDisabled);
@@ -103,13 +103,12 @@ export default function Container({
         // console.log("data == user?!", data); //ok
 
         if (res.ok) {
-          // console.log("res.ok");
           showAlert("success", ALERT.SUCCESS);
 
           // alert(data.session.token);
-          // console.log("data.session.user", data.session.user); //ok
+          console.log("data.session", data.session); //ok
 
-          //зберегли сесію
+          //зберегли сесію в localStorage
           saveSession(data.session);
 
           //записали user в AuthContext//data={token, user: {email, isConfirm}}
