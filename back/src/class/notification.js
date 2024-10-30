@@ -37,9 +37,7 @@ class Notification {
     const user = this.#list.find(
       (item) => item.email === email,
     )
-    return user === undefined
-      ? []
-      : user.notificationList.reverse()
+    return user === undefined ? [] : user.notificationList
   }
 
   //for settings page, update user`s email

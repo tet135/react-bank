@@ -5,10 +5,12 @@ import Button from "../../component/button";
 import Input from "../../component/input";
 import Alert from "../../component/alert";
 
+import { AuthContext } from "../../App";
+
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { AuthContext } from "../../App";
+// import { AuthContext } from "../../App";
 
 import { checkDisabled } from "../../util/checkDisabled";
 import { validate } from "../../util/validate";
@@ -16,11 +18,12 @@ import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
+import { getTokenSession } from "../../util/session";
 
 export default function Container({ buttonPath }) {
   const context = useContext(AuthContext);
   console.log("context in Send form", context);
-
+  const token = getTokenSession();
   const navigate = useNavigate();
 
   //помилка при валідації інпута
@@ -79,19 +82,16 @@ export default function Container({ buttonPath }) {
 
       //відправити дані реєстрації на бекенд - формуємо запит на сервер на реєстрацію користувача
       try {
-        const res = await fetch(
-          `http://localhost:4000/send?token=${context.state.token}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: value.email,
-              amount: value.amount,
-            }),
-          }
-        );
+        const res = await fetch(`http://localhost:4000/send?token=${token}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: value.email,
+            amount: value.amount,
+          }),
+        });
 
         const data = await res.json();
         console.log("data = transaction", data); //

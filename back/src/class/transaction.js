@@ -88,9 +88,7 @@ class Transaction {
       (item) => item.email === email,
     )
     //повертаємо перелік транзакцій
-    return user === undefined
-      ? []
-      : user.transactions.reverse()
+    return user === undefined ? [] : user.transactions
   }
 
   static getSum = (email) => {

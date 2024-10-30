@@ -1,18 +1,20 @@
 import "./index.css";
-import "../../style/click.css";
 import "../../style/skeleton.css";
 
 import Divider from "../../component/divider";
 import TotalBalance from "../../component/totalBalance";
 
-import { Fragment, useEffect, useState, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../App";
-import { STATE } from "../../util/configConsts";
 
-export default function Component() {
+import { STATE } from "../../util/configConsts";
+import { getTokenSession } from "../../util/session";
+
+import { Fragment, useContext, useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+
+export default function Container() {
   const context = useContext(AuthContext);
-  console.log("context in transactions", context);
+  console.log("context in form", context);
   console.log("context.state.token in transaction page", context.state.token);
 
   const { transactionId } = useParams();
@@ -20,12 +22,16 @@ export default function Component() {
   const navigate = useNavigate();
   if (!transactionId) navigate("/balance");
 
-  const [status, setStatus] = useState(null);
-  const [data, setData] = useState(null);
-  // console.log("data", data);
+  //помилка при валідації інпута
+  const [status, setStatus] = useState({});
 
-  //перемальовуэ зовнійній вигляд в залежності від status
-  //враховує status, змінює вигляд element через зміну innerHTML
+  //value -  це об'єкn з назвами інпутів та їх актуальними значеннями
+  const [value, setValue] = useState({});
+  console.log("value", value);
+
+  const token = getTokenSession();
+  console.log("token from session", token);
+  //++++++++++++++++++++
   const updateView = (status, data) => {
     const element = document.querySelector(".item__container");
     const amount = document.querySelector(".item__amount");
@@ -105,8 +111,8 @@ export default function Component() {
         return (element.innerHTML = ``);
     }
   };
+  //+++++++
 
-  //конвертуэ дні, що надходять з бекенду в фронтенд-вигляд
   const convertData = (data) => {
     const trans = data.transaction;
     const monthNames = [
@@ -136,11 +142,11 @@ export default function Component() {
         },
         amount: {
           dollars: Math.trunc(Number(trans.amount)),
-          coins: Math.trunc(
-            (Number(trans.amount).toFixed(2) -
-              Math.trunc(Number(trans.amount))) *
-              100
-          ),
+          coins: Math.round(
+            (Number(trans.amount) - Math.trunc(Number(trans.amount))) * 100
+          )
+            .toString()
+            .padStart(2, "0"),
         },
         type: trans.type === "Receipt" ? "Recive" : "Send",
         address: trans.payment_system ? "Payment system" : "Address",
@@ -151,19 +157,21 @@ export default function Component() {
     };
   };
 
+  //++++++++++++++
+
   const loadTransaction = async () => {
     setStatus(STATE.LOADING);
     console.log("status", status); //ok
 
     // console.log("transactionId", transactionId); //ok
 
-    updateView(STATE.LOADING);
+    updateView(STATE.LOADING, value); //чи треба тут value?
     // return null;
 
     //формуємо запит на сервер about getting List of transactions
     try {
       const res = await fetch(
-        `http://localhost:4000/transaction-item?id=${transactionId}&token=${context.state.token}`,
+        `http://localhost:4000/transaction-item?id=${transactionId}&token=${token}`,
         {
           method: "GET",
         }
@@ -177,11 +185,11 @@ export default function Component() {
         setStatus(STATE.SUCCESS);
         const convertedData = convertData(data);
         // console.log("converted data", convertedData); //ok
-        setData(convertedData);
+        setValue(convertedData);
         updateView(STATE.SUCCESS, convertedData);
       } else {
         setStatus(STATE.ERROR);
-        setData(data);
+        setValue(data);
         updateView(STATE.ERROR, data);
         // setTimeout(() => navigate("/balance"), 3000);
         // showAlert("error", data.message);
@@ -189,7 +197,7 @@ export default function Component() {
     } catch (err) {
       setStatus(STATE.ERROR);
       //тут не конвертуэмо
-      setData({ message: err.message });
+      setValue({ message: err.message });
       // setTimeout(() => navigate("/balance"), 3000);
     }
   };
@@ -200,12 +208,6 @@ export default function Component() {
 
   return (
     <Fragment>
-      {/* <TotalBalance
-        type="{data.transaction.type}"
-        sum="{data.transaction.amount.dollars}"
-        sumCoins="{data.transaction.amount.dollars}"
-      /> */}
-
       <h1 className="item__amount">Transaction amount loading...</h1>
       <div className="item__container"></div>
     </Fragment>

@@ -14,18 +14,20 @@ import { REQUEST_ACTION_TYPE } from "../util/globalReducer";
 
 import { saveSession } from "../util/session";
 
-
-
 export default function Container() {
     const context = useContext(AuthContext);
+    // console.log("context in settings page", context)
     const navigate = useNavigate();
     const handleLogout = () => {
 
         //зберегли сесію
         saveSession(null);
+        // const session = getSession();
+        // console.log("session after logout", session)
         
         //записали user в AuthContext//data={token, user: {email, isConfirm}}
         updateGlobalState(REQUEST_ACTION_TYPE.LOGOUT, null, context);
+        // console.log("context after logout", context)
 
         //перейти на сторінку '/'
        navigate("/");

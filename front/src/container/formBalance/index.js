@@ -2,13 +2,20 @@ import "./index.css";
 import "../../style/click.css";
 import "../../style/skeleton.css";
 
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../../App";
 
 import { SRC, STATE } from "../../util/configConsts";
+import { getTokenSession } from "../../util/session";
 
 export default function Component() {
+  console.log("render of formBalance");
+  const token = getTokenSession();
+  // console.log("token in balance", token); //ok
+
   const context = useContext(AuthContext);
+  console.log("context in balance", context); //ok
 
   const [status, setStatus] = useState(null);
   const [data, setData] = useState(null);
@@ -63,9 +70,11 @@ export default function Component() {
         `;
 
         data.list &&
-          data.list.forEach((item) => {
-            element.innerHTML += `
-          <a href="/transaction/${item.id}" class="card__container click">
+          data.list.map((item) => {
+            return (element.innerHTML += `
+          <a key=${item.id} href='/transaction/${
+              item.id
+            }' class="card__container click">
             <div class="card__img_bg">
               <img
                 src="${
@@ -110,7 +119,7 @@ export default function Component() {
               </span>
             </div>
           </a>
-          `;
+          `);
           });
         break;
       case STATE.ERROR:
@@ -147,11 +156,12 @@ export default function Component() {
         dollars: Math.trunc(total),
         coins: total.split(".")[1],
       },
-      list: data.list.map((item) => ({
+      list: data.list.reverse().map((item) => ({
         ...item,
+        recipient_email: item.recipient_email.split("@")[0],
         date: {
-          hours: new Date(item.date).getHours().toString().padEnd(2, "0"),
-          minutes: new Date(item.date).getMinutes().toString().padEnd(2, "0"),
+          hours: new Date(item.date).getHours().toString().padStart(2, "0"),
+          minutes: new Date(item.date).getMinutes().toString().padStart(2, "0"),
         },
         amount: {
           dollars: Math.trunc(Number(item.amount)),
@@ -170,11 +180,11 @@ export default function Component() {
     //формуємо запит на сервер about getting List of transactions
     try {
       const res = await fetch(
-        `http://localhost:4000/balance-data?token=${context.state.token}`,
+        `http://localhost:4000/balance-data?token=${token}`,
         {
           method: "GET",
           // headers: {
-          //   Authorization: `Bearer ${context.state.token}`,
+          //   Authorization: context.state.token,// not working!
           // },
         }
       );
@@ -206,5 +216,75 @@ export default function Component() {
     loadTransactionsList();
   }, []);
 
-  return <div className="transaction__list card__list"></div>;
+  return (
+    <div className="transaction__list card__list">
+      {/* {data.list &&
+        data.list.map((item) => {
+          return (
+            <Link
+              key={item.id}
+              to={"/transaction/item.id"}
+              className="card__container click"
+            >
+              <div className="card__img_bg">
+                <img
+                  src={
+                    item.payment_system === null
+                      ? SRC.SENDER
+                      : item.payment_system === "Coinbase"
+                      ? SRC.COINBASE
+                      : SRC.STRIPE
+                  }
+                  alt="transaction_method"
+                  width={18}
+                  height={18}
+                />
+              </div>
+              <div className="card__info">
+                <p className="card__name">
+                  {item.payment_system || item.recipient_email}
+                </p>
+
+                <div className="card__details">
+                  <span className="card__data">
+                    {item.date.hours} : {item.date.minutes}
+                  </span>
+                  <span className="card__data">item.type</span>
+                </div>
+              </div>
+              <div className="transaction__sum">
+                <span
+                  className={
+                    item.type === "Sending"
+                      ? "transaction__dollar"
+                      : "transaction__dollar transaction__dollar--received"
+                  }
+                >
+                  {item.type === "Sending" ? "-" : "+"}$
+                </span>
+
+                <span
+                  className={
+                    item.type === "Sending"
+                      ? "transaction__dollar"
+                      : "transaction__dollar transaction__dollar--received"
+                  }
+                >
+                  {item.amount.dollars}.
+                </span>
+                <span
+                  className={
+                    item.type === "Sending"
+                      ? "transaction__coins"
+                      : "transaction__coins--received"
+                  }
+                >
+                  {item.amount.coins}
+                </span>
+              </div>
+            </Link>
+          );
+        })} */}
+    </div>
+  );
 }

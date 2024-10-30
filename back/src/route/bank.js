@@ -200,6 +200,7 @@ router.get('/balance-data', function (req, res) {
       sum: Transaction.getSum(email),
       list: transactions.map((trans) => ({
         id: trans.id,
+        payer_email: trans.payer_email,
         payment_system: trans.payment_system,
         recipient_email: trans.recipient_email,
         type: trans.type,
@@ -215,7 +216,7 @@ router.get('/balance-data', function (req, res) {
 })
 //++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++
-router.get('/transaction', function (req, res) {})
+// router.get('/transaction', function (req, res) {})
 //++++++++++++++++++++++++++++++
 router.get('/transaction-item', function (req, res) {
   const { id } = req.query
@@ -342,7 +343,8 @@ router.post('/receive', function (req, res) {
   try {
     const { amount, payment_system } = req.body
     const { token } = req.query
-
+    // const { tokenHeaders } = req.headers
+    // console.log('token from header', tokenHeaders) //underfined!!!
     console.log(
       'amount, payment_system',
       amount,
@@ -359,13 +361,14 @@ router.post('/receive', function (req, res) {
       'Receipt',
       amount,
     )
+    console.log('transaction receive', transaction)
 
     const notification = Notification.create(
       payer_email,
       'New transaction',
       'Info',
     )
-    console.log('notification receive', notification)
+    // console.log('notification receive', notification)
     return res.status(200).json({
       transaction, //?????
     })

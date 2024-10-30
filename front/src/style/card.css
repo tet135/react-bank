@@ -3,6 +3,8 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    scroll-behavior: smooth;
+    overflow-y: auto;
 }
 
 .card__container {

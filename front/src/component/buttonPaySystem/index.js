@@ -22,15 +22,17 @@ export default function Component({ handleClick, disabled = true, text }) {
             alt="payment_system"
             width={18}
             height={18}
+            name={text}
           />
         </div>
-        <div>{text}</div>
+        <div name={text}>{text}</div>
       </div>
 
       <img
         src={text === "Coinbase" ? SRC.COINBASE_PAY : SRC.STRIPE_PAY}
         alt="payment_system"
         height={20}
+        name={text}
       />
     </button>
   );

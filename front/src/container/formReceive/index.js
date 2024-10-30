@@ -17,10 +17,13 @@ import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
+import { getTokenSession } from "../../util/session";
 
 export default function Container() {
   const context = useContext(AuthContext);
   console.log("context in Send form", context);
+
+  const token = getTokenSession();
 
   const navigate = useNavigate();
 
@@ -81,7 +84,7 @@ export default function Container() {
       //відправити дані реєстрації на бекенд - формуємо запит на сервер на реєстрацію користувача
       try {
         const res = await fetch(
-          `http://localhost:4000/receive?token=${context.state.token}`,
+          `http://localhost:4000/receive?token=${token}`,
           {
             method: "POST",
             headers: {
@@ -112,6 +115,9 @@ export default function Container() {
   };
 
   const handleReceive = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("e", e);
     submit(e);
   };
 

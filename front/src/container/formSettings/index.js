@@ -21,6 +21,7 @@ import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
+import { getTokenSession } from "../../util/session";
 
 export default function Container({
   newInput,
@@ -30,6 +31,9 @@ export default function Container({
   buttonPath,
 }) {
   const context = useContext(AuthContext);
+  console.log("context in settings", context);
+
+  const token = getTokenSession();
 
   const [error, setError] = useState({});
 
@@ -92,7 +96,7 @@ export default function Container({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            token: context.state.token,
+            token: token,
 
             oldPassword: value.password_old,
             changedInput: newInput,

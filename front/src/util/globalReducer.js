@@ -56,7 +56,7 @@ export const globalReducer = (globalState, action) => {
       return {
         ...globalState,
         token: null,
-        user: null,
+        user: {},
       };
     //for formSettings
     case REQUEST_ACTION_TYPE.UPDATE:

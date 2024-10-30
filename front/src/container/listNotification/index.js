@@ -2,13 +2,19 @@ import "./index.css";
 import "../../style/skeleton.css";
 import "../../style/card.css";
 
+// import { AuthContext } from "../../App";
+
 import { useEffect, useState, useContext } from "react";
-import { AuthContext } from "../../App";
 
 import { SRC, STATE } from "../../util/configConsts";
+import { getTokenSession } from "../../util/session";
+import { calculateTimeAgo } from "../../util/calculateTimeAgo";
 
 export default function Component() {
-  const context = useContext(AuthContext);
+  // const context = useContext(AuthContext);
+  // console.log("context in notification", context);
+
+  const token = getTokenSession();
 
   const [status, setStatus] = useState(null);
   const [data, setData] = useState(null);
@@ -62,9 +68,7 @@ export default function Component() {
               <p class="card__name">${item.name}</p>
 
               <div class="card__details">
-                <span class="card__data">
-                  ${item.time} min. ago
-                </span>
+                <span class="card__data">${item.time}</span>
                 <span class="card__data">${item.type}</span>
               </div>
             </div>
@@ -86,9 +90,9 @@ export default function Component() {
   const convertData = (data) => {
     return {
       ...data,
-      list: data.list.map((item) => ({
+      list: data.list.reverse().map((item) => ({
         ...item,
-        time: Math.round((Date.now() - new Date(item.date)) / 1000 / 60),
+        time: calculateTimeAgo(item.date),
       })),
     };
   };
@@ -102,7 +106,7 @@ export default function Component() {
     //формуємо запит на сервер about getting List
     try {
       const res = await fetch(
-        `http://localhost:4000/notifications-data?token=${context.state.token}`,
+        `http://localhost:4000/notifications-data?token=${token}`,
         {
           method: "GET",
           // headers: {

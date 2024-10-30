@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import WelcomePage from './page/welcomePage'
@@ -15,6 +15,8 @@ import TransactionPage from './page/transactionPage'
 import NotificationsPage from './page/notificationsPage'
 import Error from './page/errorPage'
 
+import { updateGlobalState } from "./util/updateGlobalState";
+
 
 import AuthRoute from './component/authRoute'
 import PrivateRoute from './component/privateRoute'
@@ -28,6 +30,8 @@ import PrivateRoute from './component/privateRoute'
 // }
 
 import { initGlobalState, globalReducer } from "./util/globalReducer"
+import { getTokenSession, getSession } from "./util/session";
+import { REQUEST_ACTION_TYPE } from "./util/globalReducer";
 
 
 export const AuthContext = createContext({})
@@ -57,7 +61,8 @@ function App() {
             element={
               <AuthRoute>
                 <SignInPage />
-              </AuthRoute>}/>
+              </AuthRoute>
+            }/>
 
           <Route path="/signup" element={
             <AuthRoute>
@@ -124,9 +129,9 @@ function App() {
           <Route
             path="/transaction/:transactionId"
             element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <TransactionPage />
-              // </PrivateRoute>
+              </PrivateRoute>
               }/>
           <Route path="*" element={<Error/>} />
         </Routes>
