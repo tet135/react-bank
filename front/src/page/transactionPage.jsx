@@ -1,7 +1,7 @@
 import Page from '../component/page'
 import ButtonBack from '../component/button_back'
 import Title from '../component/title'
-import TransactionDetails from '../container/formTransaction'
+import FormTransaction from '../container/formTransaction'
 
 
 export default function Container() {
@@ -9,7 +9,7 @@ export default function Container() {
         <Page background='grey'>
             <ButtonBack />
             <Title className='title--center'>Transaction</Title>
-            <TransactionDetails/>
+            <FormTransaction/>
         </Page>
     )
 }

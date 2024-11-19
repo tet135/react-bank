@@ -216,7 +216,7 @@ router.get('/balance-data', function (req, res) {
 })
 //++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++
-// router.get('/transaction', function (req, res) {})
+router.get('/transaction', function (req, res) {})
 //++++++++++++++++++++++++++++++
 router.get('/transaction-item', function (req, res) {
   const { id } = req.query

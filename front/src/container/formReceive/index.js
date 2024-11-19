@@ -72,7 +72,7 @@ export default function Container() {
   };
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  const submit = async (e) => {
+  const handleReceive = async (pay_system) => {
     if (disabled === true) {
       validateAll(value, setDisabled);
       //ще показати поле, яке треба заповнити?!
@@ -91,7 +91,7 @@ export default function Container() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              payment_system: e.target.name,
+              payment_system: pay_system,
               amount: value.amount,
             }),
           }
@@ -114,13 +114,6 @@ export default function Container() {
     }
   };
 
-  const handleReceive = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("e", e);
-    submit(e);
-  };
-
   return (
     <form className="form">
       <Input
@@ -128,17 +121,18 @@ export default function Container() {
         label="Receive amount"
         placeholder="$100"
         name={FIELD_NANE.SUM}
+        autoFocus={true}
       />
       <Divider />
       <div className="label">Payment system</div>
       <ButtonPaySystem
-        handleClick={handleReceive}
+        handleClick={() => handleReceive("Stripe")}
         disabled={disabled}
         text={"Stripe"}
       ></ButtonPaySystem>
 
       <ButtonPaySystem
-        handleClick={handleReceive}
+        handleClick={() => handleReceive("Coinbase")}
         disabled={disabled}
         text={"Coinbase"}
       ></ButtonPaySystem>

@@ -3,11 +3,11 @@ import "../../style/click.css";
 
 export default function Component({
   handleChangeInput,
-  // value,
   label,
   placeholder,
   name,
   toggle = "",
+  autoFocus = false,
 }) {
   const handleToggle = (e) => {
     const spanImg = e.target;
@@ -35,7 +35,7 @@ export default function Component({
           name={name}
           type={name}
           required
-          // value={value}
+          autoFocus={autoFocus}
         />
         {toggle && (
           <span onClick={handleToggle} className="input__icon click"></span>

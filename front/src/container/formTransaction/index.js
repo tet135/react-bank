@@ -1,16 +1,25 @@
 import "./index.css";
 import "../../style/skeleton.css";
 
-import Divider from "../../component/divider";
-import TotalBalance from "../../component/totalBalance";
-
 import { AuthContext } from "../../App";
 
 import { STATE } from "../../util/configConsts";
 import { getTokenSession } from "../../util/session";
 
-import { Fragment, useContext, useState, useEffect } from "react";
+import {
+  Fragment,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  Suspense,
+  lazy,
+} from "react";
+
 import { useParams, useNavigate } from "react-router-dom";
+import Skeleton from "../../component/skeletonTransaction";
+import TotalBalance from "../../component/totalBalance";
+const TransactionItem = lazy(() => import("../../component/transactionItem"));
 
 export default function Container() {
   const context = useContext(AuthContext);
@@ -30,90 +39,9 @@ export default function Container() {
   console.log("value", value);
 
   const token = getTokenSession();
-  console.log("token from session", token);
-  //++++++++++++++++++++
-  const updateView = (status, data) => {
-    const element = document.querySelector(".item__container");
-    const amount = document.querySelector(".item__amount");
-    // console.log("element", element); //ok
-    if (!element || !amount) throw new Error("Element or amount is null");
+  // console.log("token from session", token);
 
-    element.innerHTML = "";
-    amount.innerHTML = "";
-
-    switch (status) {
-      case STATE.LOADING:
-        amount.innerHTML = `
-          <span class="item__dollars skeleton">$...</span>
-        `;
-
-        element.innerHTML = `
-          <div class="item">
-            <div class="item__data">Date</div>
-            <div class="item__data skeleton"></div>
-          </div>
-          <div class="divider"></div>
-          <div class="item">
-            <div class="item__data">Address/Payment system</div>
-            <div class="item__data skeleton"></div>
-          </div>
-          <div class="divider"></div>
-          <div class="item">
-            <div class="item__data">Type</div>
-            <div class="item__data skeleton"></div>
-          </div>
-          `;
-        break;
-      case STATE.SUCCESS:
-        const trans = data.transaction;
-
-        amount.innerHTML = `
-            <span class="item__dollars ${
-              trans.type === "Send" ? "" : "item__dollars--receipt"
-            }">${trans.type === "Send" ? "-" : "+"}$${trans.amount.dollars}
-            </span>
-            <span class="item__coins ${
-              trans.type === "Send" ? "" : "item__coins--receipt"
-            }">
-              .${trans.amount.coins}
-            </span
-        `;
-
-        element.innerHTML = `
-          <div class="item">
-            <div class="item__data">Date</div>
-            <div class="item__data">
-              ${trans.date.day} ${trans.date.mounth}, ${trans.date.hours}:${trans.date.minutes}
-            </div>
-          </div>
-          <div class="divider"></div>
-          <div class="item">
-            <div class="item__data">${trans.address}</div>
-            <div class="item__data">
-              ${trans.author}
-            </div>
-          </div>
-          <div class="divider"></div>
-          <div class="item">
-            <div class="item__data">Type</div>
-            <div class="item__data">
-              ${trans.type}
-            </div>
-          </div>
-          `;
-        break;
-      case STATE.ERROR:
-        element.innerHTML = `
-          <div class="transaction-item">${data.message}</div>
-          `;
-        break;
-      default:
-        return (element.innerHTML = ``);
-    }
-  };
-  //+++++++
-
-  const convertData = (data) => {
+  const convertData = useCallback((data) => {
     const trans = data.transaction;
     const monthNames = [
       "January",
@@ -141,6 +69,7 @@ export default function Container() {
           minutes: new Date(trans.date).getMinutes().toString().padEnd(2, "0"),
         },
         amount: {
+          sign: trans.type === "Sending" ? "-" : "+",
           dollars: Math.trunc(Number(trans.amount)),
           coins: Math.round(
             (Number(trans.amount) - Math.trunc(Number(trans.amount))) * 100
@@ -155,19 +84,11 @@ export default function Container() {
           : trans.recipient_email,
       },
     };
-  };
+  }, []);
 
   //++++++++++++++
 
-  const loadTransaction = async () => {
-    setStatus(STATE.LOADING);
-    console.log("status", status); //ok
-
-    // console.log("transactionId", transactionId); //ok
-
-    updateView(STATE.LOADING, value); //чи треба тут value?
-    // return null;
-
+  const loadTransaction = useCallback(async () => {
     //формуємо запит на сервер about getting List of transactions
     try {
       const res = await fetch(
@@ -186,11 +107,11 @@ export default function Container() {
         const convertedData = convertData(data);
         // console.log("converted data", convertedData); //ok
         setValue(convertedData);
-        updateView(STATE.SUCCESS, convertedData);
+        // updateView(STATE.SUCCESS, convertedData);
       } else {
         setStatus(STATE.ERROR);
         setValue(data);
-        updateView(STATE.ERROR, data);
+        // updateView(STATE.ERROR, data);
         // setTimeout(() => navigate("/balance"), 3000);
         // showAlert("error", data.message);
       }
@@ -200,7 +121,7 @@ export default function Container() {
       setValue({ message: err.message });
       // setTimeout(() => navigate("/balance"), 3000);
     }
-  };
+  }, [convertData, transactionId, token]);
 
   useEffect(() => {
     loadTransaction();
@@ -208,8 +129,22 @@ export default function Container() {
 
   return (
     <Fragment>
-      <h1 className="item__amount">Transaction amount loading...</h1>
-      <div className="item__container"></div>
+      {status === STATE.SUCCESS && (
+        <Suspense fallback={<span class="total skeleton">$...</span>}>
+          <TotalBalance sum={value.transaction.amount} />
+        </Suspense>
+      )}
+
+      <div className="item__container">
+        {status === STATE.SUCCESS && (
+          <Suspense fallback={<Skeleton />}>
+            <TransactionItem trans={value.transaction} />
+          </Suspense>
+        )}
+        {status === STATE.ERROR && (
+          <div style={{ color: "red" }}>{value.message}</div>
+        )}
+      </div>
     </Fragment>
   );
 }

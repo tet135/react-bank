@@ -125,6 +125,7 @@ export default function Container({ buttonPath }) {
         label="Code"
         placeholder="you code"
         name={FIELD_NANE.CODE}
+        autoFocus={true}
       />
       <Input
         handleChangeInput={handleChangeInput}

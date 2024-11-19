@@ -121,6 +121,7 @@ export default function Container({ buttonPath }) {
         label="Email"
         placeholder="example@gmail.com"
         name={FIELD_NANE.EMAIL}
+        autoFocus={true}
       />
       <Input
         handleChangeInput={handleChangeInput}

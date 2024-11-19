@@ -1,17 +1,19 @@
 import "./index.css";
-import click from "../../style/click.css";
-import { Fragment } from "react";
+import "../../style/click.css";
+import "../../style/skeleton.css";
+import { Fragment, Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
-import TotalBalance from "../totalBalance";
 
-export default function Component() {
+const LazyTotalBalance = lazy(() => import("../../component/totalBalance"));
+
+export default function Component({ sum }) {
   return (
     <Fragment>
       <div className="balance__heading">
         <Link to="http://localhost:3000/settings">
           <img
             src="/../../../svg/settings.svg"
-            className={`img ${click}`}
+            className={`img click`}
             alt="settings"
           />
         </Link>
@@ -19,16 +21,18 @@ export default function Component() {
         <Link to="http://localhost:3000/notifications">
           <img
             src="/../../../svg/notifications.svg"
-            className={`img ${click}`}
+            className={`img click`}
             alt="notifications"
           />
         </Link>
       </div>
-      <TotalBalance type="Sending" sum="20" sumCoins="30" />
+      <Suspense fallback={<div className="total skeleton">$...</div>}>
+        <LazyTotalBalance sum={sum} />
+      </Suspense>
       <div className="balance__container balance__container--gap">
         <Link to="http://localhost:3000/receive">
           <div className="img--white">
-            <div className={`img--round ${click}`}>
+            <div className={`img--round click`}>
               <img
                 src="/../../../svg/receive.svg"
                 className="img"
@@ -40,7 +44,7 @@ export default function Component() {
         </Link>
         <Link to="http://localhost:3000/send">
           <div className="img--white">
-            <div className={`img--round ${click}`}>
+            <div className={`img--round click`}>
               <img src="/../../../svg/send.svg" className="img" alt="send" />
             </div>
           </div>

@@ -1,0 +1,22 @@
+.item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+        
+        height: 14px;
+}
+
+.item__data {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.divider {
+    height: 1px;
+    width: 100%;
+    border: none;
+    background-color: #E9E8EB;
+
+    margin: 0;
+    display: block;
+}

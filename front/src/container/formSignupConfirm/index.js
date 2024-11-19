@@ -118,12 +118,6 @@ export default function Container({ buttonPath }) {
     submit();
   };
 
-  // document.addEventListener("DOMContentLoaded", () => {
-  //   try {
-  //     if (window.session.user.isConfirm) navigate("/balance");
-  //   } catch (err) {}
-  // });
-
   return (
     <form className="form">
       <Input
@@ -131,6 +125,7 @@ export default function Container({ buttonPath }) {
         label="Code"
         placeholder="you code"
         name={FIELD_NANE.CODE}
+        autoFocus={true}
       />
       <Button
         handleClick={handleSubmit}

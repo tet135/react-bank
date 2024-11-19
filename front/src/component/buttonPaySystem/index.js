@@ -6,7 +6,7 @@ import { SRC } from "../../util/configConsts";
 
 export default function Component({ handleClick, disabled = true, text }) {
   return (
-    <button
+    <div
       onClick={handleClick}
       className={`pay_system ${disabled ? "disabled" : ""} click`}
       type="button"
@@ -22,7 +22,6 @@ export default function Component({ handleClick, disabled = true, text }) {
             alt="payment_system"
             width={18}
             height={18}
-            name={text}
           />
         </div>
         <div name={text}>{text}</div>
@@ -32,8 +31,7 @@ export default function Component({ handleClick, disabled = true, text }) {
         src={text === "Coinbase" ? SRC.COINBASE_PAY : SRC.STRIPE_PAY}
         alt="payment_system"
         height={20}
-        name={text}
       />
-    </button>
+    </div>
   );
 }
