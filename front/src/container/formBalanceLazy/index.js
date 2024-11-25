@@ -89,7 +89,7 @@ export default function Component() {
       //тут не конвертуэмо
       setData({ message: err.message });
     }
-  }, [convertData, token]);
+  }, [token, convertData]);
 
   useEffect(() => {
     loadTransactionsList();

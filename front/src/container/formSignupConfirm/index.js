@@ -6,7 +6,7 @@ import Input from "../../component/input";
 import Alert from "../../component/alert";
 
 import { AuthContext } from "../../App";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
@@ -20,14 +20,17 @@ import { saveSession, getTokenSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
 
 import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
+import { setInputFocus } from "../../util/setInputFocus";
 
 export default function Container({ buttonPath }) {
   const context = useContext(AuthContext);
-  console.log("context in signupConfirm", context);
+  // console.log("context in signupConfirm", context);
 
   const [error, setError] = useState({});
   const [value, setValue] = useState({});
   const [disabled, setDisabled] = useState(true);
+
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -118,6 +121,8 @@ export default function Container({ buttonPath }) {
     submit();
   };
 
+  useEffect(() => setInputFocus(inputRef), []);
+
   return (
     <form className="form">
       <Input
@@ -125,7 +130,7 @@ export default function Container({ buttonPath }) {
         label="Code"
         placeholder="you code"
         name={FIELD_NANE.CODE}
-        autoFocus={true}
+        inputRef={inputRef}
       />
       <Button
         handleClick={handleSubmit}

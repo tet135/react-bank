@@ -4,90 +4,32 @@ import "../../style/card.css";
 
 // import { AuthContext } from "../../App";
 
-import { useEffect, useState, useContext } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  lazy,
+  Suspense,
+  Fragment,
+} from "react";
 
-import { SRC, STATE } from "../../util/configConsts";
+import { STATE } from "../../util/configConsts";
 import { getTokenSession } from "../../util/session";
 import { calculateTimeAgo } from "../../util/calculateTimeAgo";
 
-export default function Component() {
-  // const context = useContext(AuthContext);
-  // console.log("context in notification", context);
+import Skeleton from "../../component/skeletonTransList";
+const LazyNotificationsList = lazy(() =>
+  import("../../component/notifiicationsList")
+);
 
+export default function Component() {
   const token = getTokenSession();
 
   const [status, setStatus] = useState(null);
   const [data, setData] = useState(null);
 
-  //перемальовуэ зовнійній вигляд в залежності від status
-  //враховує status, змінює вигляд element через зміну innerHTML
-  const updateView = (status, data) => {
-    const element = document.querySelector(".notifications__list");
-    // console.log("element", element); //ok
-    if (!element) throw new Error("Element is null");
-
-    element.innerHTML = "";
-    // console.log("status", status);
-    // console.log("data", data);
-
-    switch (status) {
-      case STATE.LOADING:
-        element.innerHTML = `
-        <div class="card__container card__container--big ">
-          <div class="card__img_bg skeleton"></div>
-          <div class="card__info">
-            <p class="card__name skeleton"></p>
-            <div class="card__details skeleton"></div>
-          </div>
-        </div>
-
-        <div class="card__container card__container--big">
-          <div class="card__img_bg skeleton"></div>
-          <div class="card__info">
-            <p class="card__name skeleton"></p>
-            <div class="card__details skeleton"></div>
-          </div>
-        </div>
-            `;
-        break;
-      case STATE.SUCCESS:
-        data.list.forEach((item) => {
-          element.innerHTML += `
-          <div class="card__container card__container--big two-colums">
-            <div class="card__img_bg">
-              <img
-                src="${
-                  item.type === "Warning" ? SRC.WARNING : SRC.ANNOUNCEMENT
-                }"
-                alt="img"
-                width={18}
-                height={18}
-              />
-            </div>
-            <div class="card__info">
-              <p class="card__name">${item.name}</p>
-
-              <div class="card__details">
-                <span class="card__data">${item.time}</span>
-                <span class="card__data">${item.type}</span>
-              </div>
-            </div>
-          </div>
-          `;
-        });
-        break;
-      case STATE.ERROR:
-        element.innerHTML = `
-          <div class="card__name">${data.message}</div>
-          `;
-        break;
-      default:
-        return (element.innerHTML = ``);
-    }
-  };
-
   //конвертуэ дні, що надходять з бекенду в фронтенд-вигляд
-  const convertData = (data) => {
+  const convertData = useCallback((data) => {
     return {
       ...data,
       list: data.list.reverse().map((item) => ({
@@ -95,14 +37,9 @@ export default function Component() {
         time: calculateTimeAgo(item.date),
       })),
     };
-  };
+  }, []);
 
-  const loadNotificationsList = async () => {
-    setStatus(STATE.LOADING);
-    console.log("status", status);
-    updateView(STATE.LOADING, data);
-    // return null;
-
+  const loadNotificationsList = useCallback(async () => {
     //формуємо запит на сервер about getting List
     try {
       const res = await fetch(
@@ -117,29 +54,44 @@ export default function Component() {
 
       const data = await res.json();
 
-      console.log("data = data.list", data); //ok
+      // console.log("data = data.list", data); //ok
 
       if (res.ok) {
         setStatus(STATE.SUCCESS);
         const convertedData = convertData(data);
         // console.log("converted data", convertedData); //ok
         setData(convertedData);
-        updateView(STATE.SUCCESS, convertedData);
       } else {
         setStatus(STATE.ERROR);
         setData(data);
-        updateView(STATE.ERROR, data);
       }
     } catch (err) {
       setStatus(STATE.ERROR);
       //тут не конвертуэмо
       setData({ message: err.message });
     }
-  };
+  }, [token, convertData]);
 
   useEffect(() => {
     loadNotificationsList();
   }, []);
 
-  return <div className="notifications__list card__list"></div>;
+  return (
+    <div className="notifications__list card__list">
+      {status === STATE.SUCCESS &&
+        data.list.map((item) => {
+          console.log("item", item);
+          return (
+            <Fragment key={item.id}>
+              <Suspense fallback={<Skeleton />}>
+                <LazyNotificationsList notification={item} />
+              </Suspense>
+            </Fragment>
+          );
+        })}
+      {status === STATE.ERROR && (
+        <div style={{ font: "16px", fontWeight: "bold" }}>{data.message}</div>
+      )}
+    </div>
+  );
 }

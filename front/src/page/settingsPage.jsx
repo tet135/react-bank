@@ -6,7 +6,7 @@ import FormSettings from "../container/formSettings"
 import Title from "../component/title";
 import Button from "../component/button";
 
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 
 import { AuthContext } from "../App";
 import { updateGlobalState } from '../util/updateGlobalState';
@@ -17,9 +17,10 @@ import { saveSession } from "../util/session";
 export default function Container() {
     const context = useContext(AuthContext);
     // console.log("context in settings page", context)
+    console.log("render of settingsPage")
     const navigate = useNavigate();
     const handleLogout = () => {
-
+        console.log("render of handleLogout")
         //зберегли сесію
         saveSession(null);
         // const session = getSession();
@@ -30,15 +31,15 @@ export default function Container() {
         // console.log("context after logout", context)
 
         //перейти на сторінку '/'
-       navigate("/");
-       
+       navigate("/"); 
     }
+
     return (
         <Page>
             <ButtonBack />
             <Title className='title--center'>Setting</Title>
-            <FormSettings titleText="Change email" inputLabel="New Email" newInput="email_new" toggle={false} buttonText="Save Email" />
-            <FormSettings titleText="Change password" inputLabel="New password" newInput="password_new" toggle={true} buttonText="Save password"/>
+            <FormSettings text="email"/>
+            <FormSettings text="password" toggle={true}/>
             <Button classModificator={"logout"} disabled={false} handleClick={handleLogout} >Log out</Button>
         </Page>
     )

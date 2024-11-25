@@ -6,8 +6,9 @@ import Input from "../../component/input";
 import Alert from "../../component/alert";
 
 import { AuthContext } from "../../App";
+import { setInputFocus } from "../../util/setInputFocus";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // import { AuthContext } from "../../App";
@@ -25,6 +26,8 @@ export default function Container({ buttonPath }) {
   console.log("context in Send form", context);
   const token = getTokenSession();
   const navigate = useNavigate();
+
+  const inputRef = useRef(null);
 
   //помилка при валідації інпута
   const [error, setError] = useState({});
@@ -114,6 +117,8 @@ export default function Container({ buttonPath }) {
     submit();
   };
 
+  useEffect(() => setInputFocus(inputRef), []);
+
   return (
     <form className="form">
       <Input
@@ -121,7 +126,7 @@ export default function Container({ buttonPath }) {
         label="Email"
         placeholder="example@gmail.com"
         name={FIELD_NANE.EMAIL}
-        autoFocus={true}
+        inputRef={inputRef}
       />
       <Input
         handleChangeInput={handleChangeInput}

@@ -6,7 +6,7 @@ import Input from "../../component/input";
 import Alert from "../../component/alert";
 import Divider from "../../component/divider";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../App";
@@ -18,6 +18,7 @@ import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { getTokenSession } from "../../util/session";
+import { setInputFocus } from "../../util/setInputFocus";
 
 export default function Container() {
   const context = useContext(AuthContext);
@@ -27,6 +28,7 @@ export default function Container() {
 
   const navigate = useNavigate();
 
+  const inputRef = useRef(null);
   //помилка при валідації інпута
   const [error, setError] = useState({});
 
@@ -77,7 +79,7 @@ export default function Container() {
       validateAll(value, setDisabled);
       //ще показати поле, яке треба заповнити?!
     } else {
-      console.log(value); //ok
+      // console.log(value); //ok
 
       showAlert("progress", ALERT.PROGRESS); //ok
 
@@ -114,6 +116,8 @@ export default function Container() {
     }
   };
 
+  useEffect(() => setInputFocus(inputRef), []);
+
   return (
     <form className="form">
       <Input
@@ -121,7 +125,7 @@ export default function Container() {
         label="Receive amount"
         placeholder="$100"
         name={FIELD_NANE.SUM}
-        autoFocus={true}
+        inputRef={inputRef}
       />
       <Divider />
       <div className="label">Payment system</div>

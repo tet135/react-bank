@@ -7,7 +7,7 @@ export default function Component({
   placeholder,
   name,
   toggle = "",
-  autoFocus = false,
+  inputRef = null,
 }) {
   const handleToggle = (e) => {
     const spanImg = e.target;
@@ -35,7 +35,7 @@ export default function Component({
           name={name}
           type={name}
           required
-          autoFocus={autoFocus}
+          ref={inputRef}
         />
         {toggle && (
           <span onClick={handleToggle} className="input__icon click"></span>

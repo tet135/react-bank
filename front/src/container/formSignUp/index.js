@@ -6,7 +6,7 @@ import Input from "../../component/input";
 import Alert from "../../component/alert";
 import Link from "../../component/link";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../App";
@@ -20,6 +20,7 @@ import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
+import { setInputFocus } from "../../util/setInputFocus";
 
 export default function Container({
   linkLabel,
@@ -36,6 +37,8 @@ export default function Container({
   const [value, setValue] = useState({});
 
   const [disabled, setDisabled] = useState(true);
+
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -139,6 +142,8 @@ export default function Container({
     submit();
   };
 
+  useEffect(() => setInputFocus(inputRef), []);
+
   return (
     <form className="form">
       <Input
@@ -146,7 +151,7 @@ export default function Container({
         label="Email"
         placeholder="example@gmail.com"
         name={FIELD_NANE.EMAIL}
-        autoFocus={true}
+        inputRef={inputRef}
       />
       <Input
         handleChangeInput={handleChangeInput}

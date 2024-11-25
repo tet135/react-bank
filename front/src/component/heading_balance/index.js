@@ -1,12 +1,12 @@
 import "./index.css";
 import "../../style/click.css";
 import "../../style/skeleton.css";
-import { Fragment, Suspense, lazy } from "react";
+import { Fragment, Suspense, lazy, memo } from "react";
 import { Link } from "react-router-dom";
 
 const LazyTotalBalance = lazy(() => import("../../component/totalBalance"));
 
-export default function Component({ sum }) {
+function Component({ sum }) {
   return (
     <Fragment>
       <div className="balance__heading">
@@ -54,3 +54,5 @@ export default function Component({ sum }) {
     </Fragment>
   );
 }
+
+export default memo(Component);

@@ -93,6 +93,16 @@ router.post('/settings', function (req, res) {
 
     //for changedData = new email
     if (changedInput === 'email_new') {
+      if (existedUser.email === changedData) {
+        return res.status(400).json({
+          message:
+            'The new email is identical with the old email',
+        })
+      }
+      //записали новий email в клас User
+      existedUser.email = changedData
+      //записали новий email в session
+      session.user.email = changedData
       //!!!!!!! змінюємо email користувача в існуючому листі нотифікацій
       Notification.changeEmail(
         existedUser.email,
@@ -108,11 +118,6 @@ router.post('/settings', function (req, res) {
         changedData,
       )
 
-      //записали новий email в клас User
-      existedUser.email = changedData
-      //записали новий email в session
-      session.user.email = changedData
-
       Notification.create(
         changedData,
         'Email changed',
@@ -122,6 +127,13 @@ router.post('/settings', function (req, res) {
 
     //for changedData = new password
     if (changedInput === 'password_new') {
+      if (existedUser.password === changedData) {
+        return res.status(400).json({
+          message:
+            'The new password is identical with the old password',
+        })
+      }
+
       //записали новий password в клас User
       existedUser.password = changedData
 

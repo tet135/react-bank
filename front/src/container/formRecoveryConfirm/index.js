@@ -1,7 +1,7 @@
 import "./index.css";
 import "../../style/form.css";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Button from "../../component/button";
@@ -15,6 +15,7 @@ import { changeInputOnError } from "../../util/changeInputOnError";
 import { validate } from "../../util/validate";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
+import { setInputFocus } from "../../util/setInputFocus";
 
 export default function Container({ buttonPath }) {
   const [error, setError] = useState({});
@@ -24,6 +25,8 @@ export default function Container({ buttonPath }) {
 
   //disabled -  це кнопка в формі
   const [disabled, setDisabled] = useState(true);
+
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -118,6 +121,8 @@ export default function Container({ buttonPath }) {
     submit();
   };
 
+  useEffect(() => setInputFocus(inputRef), []);
+
   return (
     <form className="form">
       <Input
@@ -125,7 +130,7 @@ export default function Container({ buttonPath }) {
         label="Code"
         placeholder="you code"
         name={FIELD_NANE.CODE}
-        autoFocus={true}
+        inputRef={inputRef}
       />
       <Input
         handleChangeInput={handleChangeInput}

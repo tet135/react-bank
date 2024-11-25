@@ -6,7 +6,7 @@ import Input from "../../component/input";
 import Alert from "../../component/alert";
 import Link from "../../component/link";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../App";
@@ -36,6 +36,8 @@ export default function Container({
   const [value, setValue] = useState({});
 
   const [disabled, setDisabled] = useState(true);
+
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -160,7 +162,7 @@ export default function Container({
         label="Email"
         placeholder="example@gmail.com"
         name={FIELD_NANE.EMAIL}
-        autoFocus={true}
+        inputRef={inputRef}
       />
       <Input
         handleChangeInput={handleChangeInput}

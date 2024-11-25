@@ -121,11 +121,11 @@ export default function Container() {
       setValue({ message: err.message });
       // setTimeout(() => navigate("/balance"), 3000);
     }
-  }, [convertData, transactionId, token]);
+  }, [transactionId, token, convertData]);
 
   useEffect(() => {
     loadTransaction();
-  }, []);
+  }, [loadTransaction]);
 
   return (
     <Fragment>
