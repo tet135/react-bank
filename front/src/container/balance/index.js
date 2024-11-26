@@ -4,7 +4,7 @@ import "../../style/skeleton.css";
 
 import {
   useEffect,
-  useState,
+  useReducer,
   Suspense,
   lazy,
   Fragment,
@@ -13,6 +13,7 @@ import {
 
 import { STATE } from "../../util/configConsts";
 import { getTokenSession } from "../../util/session";
+import { reducer, initState, ACTION_TYPE } from "../../util/reduser";
 
 import Skeleton from "../../component/skeletonTransList";
 import HeadingBalance from "../../component/heading_balance";
@@ -20,12 +21,9 @@ const LazyTransactionsList = lazy(() => import("../../component/transList"));
 
 export default function Component() {
   const token = getTokenSession();
-  // console.log("token in balance", token); //ok
 
-  const [status, setStatus] = useState(null);
-  const [data, setData] = useState(null);
+  const [state, dispatch] = useReducer(reducer, initState);
 
-  //конвертуэ дні, що надходять з бекенду в фронтенд-вигляд
   const convertData = useCallback((data) => {
     let total = Number(data.sum).toFixed(2);
 
@@ -71,23 +69,13 @@ export default function Component() {
 
       const data = await res.json();
 
-      //в data = створений Object transaction
-      // console.log("data = data.sum, data.list", data); //ok
-
       if (res.ok) {
-        setStatus(STATE.SUCCESS);
-        const convertedData = convertData(data);
-        // console.log("converted data", convertedData); //ok
-        setData(convertedData);
-        // console.log("data", data); //ok
+        dispatch({ type: ACTION_TYPE.SUCCESS, payload: convertData(data) });
       } else {
-        setStatus(STATE.ERROR);
-        setData(data);
+        dispatch({ type: ACTION_TYPE.ERROR, payload: data });
       }
     } catch (err) {
-      setStatus(STATE.ERROR);
-      //тут не конвертуэмо
-      setData({ message: err.message });
+      dispatch({ type: ACTION_TYPE.ERROR, payload: err.message });
     }
   }, [token, convertData]);
 
@@ -97,23 +85,25 @@ export default function Component() {
 
   return (
     <Fragment>
-      {status === STATE.ERROR && <HeadingBalance sum={null} />}
+      {state.status === STATE.ERROR && <HeadingBalance sum={null} />}
 
-      {status === STATE.SUCCESS && <HeadingBalance sum={data.sum} />}
+      {state.status === STATE.SUCCESS && (
+        <HeadingBalance sum={state.data.sum} />
+      )}
 
       <div className="transaction__list card__list">
-        {status === STATE.ERROR && (
+        {state.status === STATE.ERROR && (
           <Fragment>
             <div style={{ font: "16px", fontWeight: "bold" }}>
-              {data.message}
+              {state.data.message}
             </div>
           </Fragment>
         )}
 
-        {status === STATE.SUCCESS && (
+        {state.status === STATE.SUCCESS && (
           <Fragment>
-            {data.list &&
-              data.list.map((item) => {
+            {state.data.list &&
+              state.data.list.map((item) => {
                 return (
                   <Fragment key={item.id}>
                     <Suspense fallback={<Skeleton />}>

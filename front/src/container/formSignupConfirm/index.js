@@ -68,7 +68,7 @@ export default function Container({ buttonPath }) {
   };
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  const submit = async () => {
+  const handleSubmit = async () => {
     // console.log("disabled in submit", disabled); //false
     if (disabled === true) {
       // console.log("works disabled === true");
@@ -115,10 +115,6 @@ export default function Container({ buttonPath }) {
         showAlert("error", err.message);
       }
     }
-  };
-
-  const handleSubmit = (e) => {
-    submit();
   };
 
   useEffect(() => setInputFocus(inputRef), []);

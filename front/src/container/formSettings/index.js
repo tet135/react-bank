@@ -72,7 +72,7 @@ export default function Container({ text, toggle }) {
   };
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  const submit = async () => {
+  const handleSubmit = async () => {
     // console.log("disabled in submit", disabled); //false
     if (disabled === true) {
       // console.log("works disabled === true");
@@ -177,8 +177,7 @@ export default function Container({ text, toggle }) {
       />
 
       <Button
-        handleClick={submit}
-        // path={buttonPath}
+        handleClick={handleSubmit}
         classModificator="secondary"
         id={`Save ${text}`}
         disabled={disabled}

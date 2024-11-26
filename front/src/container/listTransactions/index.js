@@ -1,15 +1,13 @@
 import "./index.css";
 import "../../style/skeleton.css";
 
-import { AuthContext } from "../../App";
-
 import { STATE } from "../../util/configConsts";
 import { getTokenSession } from "../../util/session";
+import { reducer, initState, ACTION_TYPE } from "../../util/reduser";
 
 import {
   Fragment,
-  useContext,
-  useState,
+  useReducer,
   useEffect,
   useCallback,
   Suspense,
@@ -17,26 +15,18 @@ import {
 } from "react";
 
 import { useParams, useNavigate } from "react-router-dom";
+
 import Skeleton from "../../component/skeletonTransaction";
 import TotalBalance from "../../component/totalBalance";
 const TransactionItem = lazy(() => import("../../component/transactionItem"));
 
 export default function Container() {
-  const context = useContext(AuthContext);
-  console.log("context in form", context);
-  console.log("context.state.token in transaction page", context.state.token);
-
   const { transactionId } = useParams();
   // console.log("transactionId", transactionId);
   const navigate = useNavigate();
   if (!transactionId) navigate("/balance");
 
-  //помилка при валідації інпута
-  const [status, setStatus] = useState({});
-
-  //value -  це об'єкn з назвами інпутів та їх актуальними значеннями
-  const [value, setValue] = useState({});
-  console.log("value", value);
+  const [state, dispatch] = useReducer(reducer, initState);
 
   const token = getTokenSession();
   // console.log("token from session", token);
@@ -89,7 +79,7 @@ export default function Container() {
   //++++++++++++++
 
   const loadTransaction = useCallback(async () => {
-    //формуємо запит на сервер about getting List of transactions
+    //request: getting List of transactions
     try {
       const res = await fetch(
         `http://localhost:4000/transaction-item?id=${transactionId}&token=${token}`,
@@ -100,26 +90,13 @@ export default function Container() {
       //в data = конкретна transaction or message(with error)
       const data = await res.json();
 
-      // console.log("data", data); //
-
       if (res.ok) {
-        setStatus(STATE.SUCCESS);
-        const convertedData = convertData(data);
-        // console.log("converted data", convertedData); //ok
-        setValue(convertedData);
-        // updateView(STATE.SUCCESS, convertedData);
+        dispatch({ type: ACTION_TYPE.SUCCESS, payload: convertData(data) });
       } else {
-        setStatus(STATE.ERROR);
-        setValue(data);
-        // updateView(STATE.ERROR, data);
-        // setTimeout(() => navigate("/balance"), 3000);
-        // showAlert("error", data.message);
+        dispatch({ type: ACTION_TYPE.ERROR, payload: data });
       }
     } catch (err) {
-      setStatus(STATE.ERROR);
-      //тут не конвертуэмо
-      setValue({ message: err.message });
-      // setTimeout(() => navigate("/balance"), 3000);
+      dispatch({ type: ACTION_TYPE.ERROR, payload: err.message });
     }
   }, [transactionId, token, convertData]);
 
@@ -129,20 +106,20 @@ export default function Container() {
 
   return (
     <Fragment>
-      {status === STATE.SUCCESS && (
+      {state.status === STATE.SUCCESS && (
         <Suspense fallback={<span class="total skeleton">$...</span>}>
-          <TotalBalance sum={value.transaction.amount} />
+          <TotalBalance sum={state.data.transaction.amount} />
         </Suspense>
       )}
 
       <div className="item__container">
-        {status === STATE.SUCCESS && (
+        {state.status === STATE.SUCCESS && (
           <Suspense fallback={<Skeleton />}>
-            <TransactionItem trans={value.transaction} />
+            <TransactionItem trans={state.data.transaction} />
           </Suspense>
         )}
-        {status === STATE.ERROR && (
-          <div style={{ color: "red" }}>{value.message}</div>
+        {state.status === STATE.ERROR && (
+          <div style={{ color: "red" }}>{state.message}</div>
         )}
       </div>
     </Fragment>

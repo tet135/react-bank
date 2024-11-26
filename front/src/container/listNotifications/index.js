@@ -8,6 +8,7 @@ import {
   useCallback,
   useEffect,
   useState,
+  useReducer,
   lazy,
   Suspense,
   Fragment,
@@ -16,6 +17,7 @@ import {
 import { STATE } from "../../util/configConsts";
 import { getTokenSession } from "../../util/session";
 import { calculateTimeAgo } from "../../util/calculateTimeAgo";
+import { reducer, initState, ACTION_TYPE } from "../../util/reduser";
 
 import Skeleton from "../../component/skeletonTransList";
 const LazyNotificationsList = lazy(() =>
@@ -25,10 +27,8 @@ const LazyNotificationsList = lazy(() =>
 export default function Component() {
   const token = getTokenSession();
 
-  const [status, setStatus] = useState(null);
-  const [data, setData] = useState(null);
+  const [state, dispatch] = useReducer(reducer, initState);
 
-  //конвертуэ дні, що надходять з бекенду в фронтенд-вигляд
   const convertData = useCallback((data) => {
     return {
       ...data,
@@ -54,21 +54,13 @@ export default function Component() {
 
       const data = await res.json();
 
-      // console.log("data = data.list", data); //ok
-
       if (res.ok) {
-        setStatus(STATE.SUCCESS);
-        const convertedData = convertData(data);
-        // console.log("converted data", convertedData); //ok
-        setData(convertedData);
+        dispatch({ type: ACTION_TYPE.SUCCESS, payload: convertData(data) });
       } else {
-        setStatus(STATE.ERROR);
-        setData(data);
+        dispatch({ type: ACTION_TYPE.ERROR, payload: data });
       }
     } catch (err) {
-      setStatus(STATE.ERROR);
-      //тут не конвертуэмо
-      setData({ message: err.message });
+      dispatch({ type: ACTION_TYPE.ERROR, payload: err.message });
     }
   }, [token, convertData]);
 
@@ -78,9 +70,8 @@ export default function Component() {
 
   return (
     <div className="notifications__list card__list">
-      {status === STATE.SUCCESS &&
-        data.list.map((item) => {
-          console.log("item", item);
+      {state.status === STATE.SUCCESS &&
+        state.data.list.map((item) => {
           return (
             <Fragment key={item.id}>
               <Suspense fallback={<Skeleton />}>
@@ -89,8 +80,10 @@ export default function Component() {
             </Fragment>
           );
         })}
-      {status === STATE.ERROR && (
-        <div style={{ font: "16px", fontWeight: "bold" }}>{data.message}</div>
+      {state.status === STATE.ERROR && (
+        <div style={{ font: "16px", fontWeight: "bold" }}>
+          {state.data.message}
+        </div>
       )}
     </div>
   );

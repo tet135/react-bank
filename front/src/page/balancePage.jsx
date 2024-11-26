@@ -1,5 +1,5 @@
 import Page from '../component/page'
-import FormBalance from '../container/formBalanceLazy'
+import FormBalance from '../container/balance'
 
 export default function Container() {
     return (

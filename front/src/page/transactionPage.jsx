@@ -1,7 +1,7 @@
 import Page from '../component/page'
 import ButtonBack from '../component/button_back'
 import Title from '../component/title'
-import FormTransaction from '../container/formTransaction'
+import FormTransaction from '../container/listTransactions'
 
 
 export default function Container() {
