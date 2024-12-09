@@ -1,11 +1,12 @@
 import "./index.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
 import Alert from "../../component/alert";
 
 import { AuthContext } from "../../App";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 
 import { checkDisabled } from "../../util/checkDisabled";
 import { validate } from "../../util/validate";
@@ -13,6 +14,7 @@ import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
+import { setInputFocus } from "../../util/setInputFocus";
 
 export default function Container({ buttonPath }) {
   //помилка при валідації інпута
@@ -22,6 +24,8 @@ export default function Container({ buttonPath }) {
   const [value, setValue] = useState({});
 
   const [disabled, setDisabled] = useState(true);
+
+  const inputRef = useRef(null);
 
   const handleChangeInput = (event) => {
     const inputValue = event.target.value;
@@ -106,6 +110,8 @@ export default function Container({ buttonPath }) {
     submit();
   };
 
+  useEffect(() => setInputFocus(inputRef), []);
+
   return (
     <form className="form">
       <Input
@@ -113,6 +119,7 @@ export default function Container({ buttonPath }) {
         label="Email"
         placeholder="example@gmail.com"
         name={FIELD_NANE.EMAIL}
+        inputRef={inputRef}
       />
       <Button
         handleClick={handleSubmit}

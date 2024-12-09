@@ -3,8 +3,6 @@ import ButtonBack from '../component/button_back'
 import Heading from '../component/heading'
 import FormSignIn from '../container/formSignIn'
 
-
-
 export default function Container(handleSignIn, linkLabel, linkText, linkPath, buttonPath) {
 
 

@@ -41,8 +41,12 @@ export const validate = (name, value) => {
 
   // for code
   // просто перевірка на число. а на бекенді далі йде перевірка прописана в класі User.js
-  if (name === "code") {
+  if (name === FIELD_NANE.CODE) {
     if (isNaN(value)) return FIELD_ERROR.CODE;
+  }
+
+  if (name === FIELD_NANE.SUM) {
+    if (isNaN(value)) return FIELD_ERROR.SUM;
   }
 
   // // for isConfirm

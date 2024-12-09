@@ -2,12 +2,21 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    height: 38px;
+    color: #1D1D1F;
 }
 
 .total {
     color: #1D1D1F;
     font-size: 38px;
-    font-weight: bold;
+    font-weight: 700;
+    height: 38px;
+    /* width: 100%; */
+}
+.total__coins {
+    color: #403f43;
+    font-size: 38px;
+    font-weight: 500;
 }
 
 .total--receipt,
@@ -15,7 +24,9 @@
     color: #24B277 !important;
 }
 
-.total__coins {
-    color: #939199;
-    font-size: 38px;
+/* //?????????? */
+.total--balance,
+.total__coins--balance {
+    color: #fff;
 }
+

@@ -1,11 +1,5 @@
 // перевіряє всі інпути і перемальовує кнопку
-export const checkDisabled = (
-  value,
-  error,
-  disabled = true,
-  setDisabled,
-  id
-) => {
+export const checkDisabled = (value, error, disabled, setDisabled, id) => {
   Object.keys(value).forEach((name) => {
     setDisabled(false);
     //value[name] === "undefined" - коли значення не введене

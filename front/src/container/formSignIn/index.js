@@ -1,11 +1,12 @@
 import "./index.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
 import Alert from "../../component/alert";
 import Link from "../../component/link";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../App";
@@ -15,7 +16,7 @@ import { validate } from "../../util/validate";
 import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
-import { REQUEST_ACTION_TYPE } from "../../util/glogalReducer";
+import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
@@ -35,6 +36,8 @@ export default function Container({
   const [value, setValue] = useState({});
 
   const [disabled, setDisabled] = useState(true);
+
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -159,6 +162,7 @@ export default function Container({
         label="Email"
         placeholder="example@gmail.com"
         name={FIELD_NANE.EMAIL}
+        inputRef={inputRef}
       />
       <Input
         handleChangeInput={handleChangeInput}

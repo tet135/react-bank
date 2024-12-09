@@ -1,26 +1,33 @@
 import "./index.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
 import Alert from "../../component/alert";
 
-import { useContext, useState } from "react";
+import { AuthContext } from "../../App";
+import { setInputFocus } from "../../util/setInputFocus";
+
+import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { AuthContext } from "../../App";
+// import { AuthContext } from "../../App";
 
 import { checkDisabled } from "../../util/checkDisabled";
 import { validate } from "../../util/validate";
 import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
-import { REQUEST_ACTION_TYPE } from "../../util/glogalReducer";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
-import { saveSession } from "../../util/session";
-import { updateGlobalState } from "../../util/updateGlobalState";
+import { getTokenSession } from "../../util/session";
 
 export default function Container({ buttonPath }) {
   const context = useContext(AuthContext);
+  console.log("context in Send form", context);
+  const token = getTokenSession();
+  const navigate = useNavigate();
+
+  const inputRef = useRef(null);
 
   //помилка при валідації інпута
   const [error, setError] = useState({});
@@ -30,14 +37,13 @@ export default function Container({ buttonPath }) {
 
   const [disabled, setDisabled] = useState(true);
 
-  const navigate = useNavigate();
-
+  //handleChangeInput без змін, винести!
   const handleChangeInput = (event) => {
     const inputValue = event.target.value;
     const inputName = event.target.name;
-    // console.log("inputValue", "inputName", inputName, inputValue);//ok
+    // console.log("inputValue", "inputName", inputName, inputValue); //
     setValue({ ...value, [inputName]: inputValue });
-    // console.log("value", value); //ok, але відображає дані - один символ((((((((((()))))))))))
+    // console.log("value", value); //
 
     // validation();
     const inputError = validate(inputName, inputValue); //текст помилки або underfined(=немаэ помилки
@@ -69,58 +75,35 @@ export default function Container({ buttonPath }) {
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   const submit = async () => {
-    console.log("disabled in submit", disabled); //false
     if (disabled === true) {
-      // console.log("works disabled === true");
       validateAll(value, setDisabled);
       //ще показати поле, яке треба заповнити?!
     } else {
-      // console.log(value); //ok returns   {email: 'test@mail.com', password: 'Dfgdf12d34'}
+      console.log(value); //ok returns   {email: 'test@mail.com', password: 'Dfgdf12d34'}
 
       showAlert("progress", ALERT.PROGRESS); //ok
 
       //відправити дані реєстрації на бекенд - формуємо запит на сервер на реєстрацію користувача
       try {
-        const res = await fetch(`http://localhost:4000/signup`, {
+        const res = await fetch(`http://localhost:4000/send?token=${token}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             email: value.email,
-            password: value.password,
+            amount: value.amount,
           }),
         });
 
         const data = await res.json();
-        //в data = створений Object юзер
-        // console.log("data == user?!", data); //ok
+        console.log("data = transaction", data); //
 
         if (res.ok) {
           // console.log("res.ok");
-          showAlert("success", ALERT.SUCCESS);
+          showAlert("success", ALERT.TRANSACTION);
 
-          // alert(data.session.token);
-          // console.log("data.session.user", data.session.user); //ok
-
-          //зберегли сесію
-          saveSession(data.session);
-
-          //записали user в AuthContext//data={token, user: {email, isConfirm}}
-          updateGlobalState(REQUEST_ACTION_TYPE.LOGIN, data.session, context);
-
-          //перейти на сторінку '/signup-confirm'
-          // navigate("/signup-confirm");
-          setTimeout(() => navigate("/signup-confirm"), 3000);
-
-          // window.location.assign("/signup-confirm") //ok
-
-          // //очистити поля! після відправки форми
-          // if (isSubmitted) {
-          //   const inputs = document.querySelectorAll("input");
-          //   console.log(inputs);
-          //   inputs.values("");
-          // }
+          setTimeout(() => navigate("/balance"), 2000);
         } else {
           showAlert("error", data.message);
         }
@@ -130,9 +113,11 @@ export default function Container({ buttonPath }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSending = (e) => {
     submit();
   };
+
+  useEffect(() => setInputFocus(inputRef), []);
 
   return (
     <form className="form">
@@ -141,6 +126,7 @@ export default function Container({ buttonPath }) {
         label="Email"
         placeholder="example@gmail.com"
         name={FIELD_NANE.EMAIL}
+        inputRef={inputRef}
       />
       <Input
         handleChangeInput={handleChangeInput}
@@ -149,7 +135,7 @@ export default function Container({ buttonPath }) {
         name={FIELD_NANE.SUM}
       />
       <Button
-        handleClick={handleSubmit}
+        handleClick={handleSending}
         path={buttonPath}
         classModificator="primary"
         disabled={disabled}

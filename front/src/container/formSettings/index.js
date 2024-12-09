@@ -1,5 +1,6 @@
 import "./index.css";
 import "../../style/click.css";
+import "../../style/form.css";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
@@ -16,19 +17,18 @@ import { validate } from "../../util/validate";
 import { showAlert } from "../../util/showAlert";
 import { validateAll } from "../../util/validateAll";
 import { changeInputOnError } from "../../util/changeInputOnError";
-import { REQUEST_ACTION_TYPE } from "../../util/glogalReducer";
+import { REQUEST_ACTION_TYPE } from "../../util/globalReducer";
 import { ALERT, FIELD_NANE } from "../../util/configConsts";
 import { saveSession } from "../../util/session";
 import { updateGlobalState } from "../../util/updateGlobalState";
+import { getTokenSession } from "../../util/session";
 
-export default function Container({
-  newInput,
-  inputLabel,
-  toggle,
-  buttonText,
-  buttonPath,
-}) {
+export default function Container({ text, toggle }) {
+  const newInput = `${text}_new`;
   const context = useContext(AuthContext);
+  console.log("context in settings", context);
+
+  const token = getTokenSession();
 
   const [error, setError] = useState({});
 
@@ -68,11 +68,11 @@ export default function Container({
 
     // console.log("error", error);
 
-    checkDisabled(value, error, disabled, setDisabled, buttonText);
+    checkDisabled(value, error, disabled, setDisabled, `Save ${text}`);
   };
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  const submit = async () => {
+  const handleSubmit = async () => {
     // console.log("disabled in submit", disabled); //false
     if (disabled === true) {
       // console.log("works disabled === true");
@@ -81,12 +81,9 @@ export default function Container({
     } else {
       // console.log(value); //ok returns   {email: 'test@mail.com', password: 'Dfgdf12d34'}
 
-      showAlert("progress", ALERT.PROGRESS, buttonText); //ok
-
-      console.log("value", value);
-      console.log("newInput", newInput);
-      console.log("value[newInput]", value[newInput]);
-
+      showAlert("progress", ALERT.PROGRESS, text);
+      const inputs = document.querySelectorAll("input");
+      // console.log(inputs); //returns 4 inputs
       //відправити дані реєстрації на бекенд - формуємо запит на сервер на відновлення пошти
       try {
         const res = await fetch(`http://localhost:4000/settings`, {
@@ -95,11 +92,7 @@ export default function Container({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            // token: context.state.token,
-            // email: value.email,
-            // password: value.password,
-
-            token: context.state.token,
+            token: token,
 
             oldPassword: value.password_old,
             changedInput: newInput,
@@ -108,19 +101,13 @@ export default function Container({
         });
 
         const data = await res.json();
-        console.log("data.session", data.session); //undefined(((((((((((((())))))))))))))
+        // console.log("data.session", data.session);
 
         if (res.ok) {
           // console.log("res.ok");
           if (newInput === FIELD_NANE.EMAIL_NEW) {
-            showAlert("success", ALERT.SUCCESS_EMAIL_CHANGED);
-
-            // showAlert(
-            //   "success",
-            //   ALERT.SUCCESS_EMAIL_CHANGED,
-            //   `alert-${buttonText}`
-            // );
-
+            console.log("change email");
+            showAlert("success", ALERT.SUCCESS_EMAIL_CHANGED, text);
             //записали user в AuthContext//data={token, user: {email, isConfirm}}
             updateGlobalState(
               REQUEST_ACTION_TYPE.UPDATE,
@@ -129,47 +116,51 @@ export default function Container({
             );
             //зберегли сесію
             saveSession(data.session);
+            // //очистити поля! після відправки форми
+            inputs[0].value = "";
+            inputs[1].value = "";
             //прибрали алерт
-            // setTimeout(showAlert(), 3000);
+            setTimeout(() => showAlert("", null, text), 3000);
           }
 
           if (newInput === FIELD_NANE.PASSWORD_NEW) {
-            showAlert("success", ALERT.SUCCESS_PASSWORD_CHANGED);
+            console.log("change password");
+            showAlert("success", ALERT.SUCCESS_PASSWORD_CHANGED, text);
 
-            // showAlert(
-            //   "success",
-            //   ALERT.SUCCESS_PASSWORD_CHANGED,
-            //   `alert-${buttonText}`
-            // );
+            updateGlobalState(
+              REQUEST_ACTION_TYPE.UPDATE,
+              data.session,
+              context
+            );
+
+            saveSession(data.session);
+
+            // //очистити поля! після відправки форми
+            inputs[2].value = "";
+            inputs[3].value = "";
             //прибрали алерт
-            // setTimeout(showAlert(), 3000);
+            setTimeout(() => showAlert("", null, text), 3000);
           }
-
-          // //очистити поля! після відправки форми
-          // if (isSubmitted) {
-          // const inputs = document.querySelectorAll("input");
-          // console.log(inputs); //returns 4 inputs
-          // inputs.values("");
 
           // }
         } else {
-          showAlert("error", data.message, `alert-${buttonText}`);
-          showAlert("error", data.message);
+          showAlert("error", data.message, text);
+          setTimeout(() => showAlert("", null, text), 5000);
+          if (text === "email") inputs[1].value = "";
+          if (text === "password") inputs[3].value = "";
         }
       } catch (err) {
-        showAlert("error", err.message);
-        // showAlert("error", err.message, `alert-${buttonText}`);
+        showAlert("error", err.message, text);
+        setTimeout(() => showAlert("", null, text), 5000);
+        if (text === "email") inputs[1].value = "";
+        if (text === "password") inputs[3].value = "";
       }
     }
   };
 
-  const handleSubmit = (e) => {
-    submit();
-  };
-
   return (
-    <form className="form">
-      <Title>Change email</Title>
+    <form className="form" name={text}>
+      <Title>Change {text}</Title>
       <Input
         handleChangeInput={handleChangeInput}
         label="Old password"
@@ -179,7 +170,7 @@ export default function Container({
       />
       <Input
         handleChangeInput={handleChangeInput}
-        label={inputLabel}
+        label={`New ${text}`}
         placeholder="example@gmail.com"
         name={newInput}
         toggle={toggle}
@@ -187,15 +178,14 @@ export default function Container({
 
       <Button
         handleClick={handleSubmit}
-        path={buttonPath}
         classModificator="secondary"
-        id={buttonText}
+        id={`Save ${text}`}
         disabled={disabled}
       >
-        {buttonText}
+        {`Save ${text}`}
       </Button>
+
       <Alert />
-      {/* <Alert id={`alert-${buttonText}`} /> */}
       <Divider />
     </form>
   );

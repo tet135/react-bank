@@ -7,6 +7,7 @@ const router = express.Router()
 const { User } = require('../class/user')
 const { Confirm } = require('../class/confirm')
 const { Session } = require('../class/session')
+const { Notification } = require('../class/notification')
 
 const testUser = User.createUser(
   'test@gmail.com',
@@ -15,7 +16,13 @@ const testUser = User.createUser(
 )
 
 const testUser2 = User.createUser(
-  'test2@gmail.com',
+  'diana@gmail.com',
+  'S123sssss',
+  true,
+)
+
+const testUser3 = User.createUser(
+  '12345@gmail.com',
   'S123sssss',
   true,
 )
@@ -80,11 +87,17 @@ router.get('/signup-confirm', function (req, res) {})
 router.post('/signup-confirm', function (req, res) {
   const { token, code } = req.body
 
-  // console.log('code, token', code, token) //ok ! чи приходить відповідь з бекенду
+  console.log('code, token', code, token) //ok ! чи приходить відповідь з бекенду
 
-  if (!code || !token) {
+  if (!code) {
     return res.status(400).json({
       message: 'Enter the code you received',
+    })
+  }
+
+  if (!token) {
+    return res.status(400).json({
+      message: 'You need to sign in',
     })
   }
 
@@ -211,6 +224,8 @@ router.post('/recovery-confirm', function (req, res) {
 
     const session = Session.create(user)
 
+    Notification.create(email, 'Acount recovery', 'Warning')
+
     return res.status(200).json({
       message: 'You password was successfully changed',
       session,
@@ -259,6 +274,8 @@ router.post('/signin', function (req, res) {
     // console.log('session', session)
 
     Confirm.create(existedUser.email)
+
+    Notification.create(email, 'New Login', 'Warning')
 
     return res.status(200).json({
       message: 'You are log in',

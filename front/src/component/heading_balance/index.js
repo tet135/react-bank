@@ -1,16 +1,19 @@
-import { Link } from "react-router-dom";
 import "./index.css";
-import click from "../../style/click.css";
-import { Fragment } from "react";
+import "../../style/click.css";
+import "../../style/skeleton.css";
+import { Fragment, Suspense, lazy, memo } from "react";
+import { Link } from "react-router-dom";
 
-export default function Component() {
+const LazyTotalBalance = lazy(() => import("../../component/totalBalance"));
+
+function Component({ sum }) {
   return (
     <Fragment>
       <div className="balance__heading">
         <Link to="http://localhost:3000/settings">
           <img
             src="/../../../svg/settings.svg"
-            className={`img ${click}`}
+            className={`img click`}
             alt="settings"
           />
         </Link>
@@ -18,20 +21,18 @@ export default function Component() {
         <Link to="http://localhost:3000/notifications">
           <img
             src="/../../../svg/notifications.svg"
-            className={`img ${click}`}
+            className={`img click`}
             alt="notifications"
           />
         </Link>
       </div>
-      <div className="balance__container">
-        <span className="balance">$</span>
-        <h1 className="balance">100</h1>
-        <span className="balance__coins">.20</span>
-      </div>
+      <Suspense fallback={<div className="total skeleton">$...</div>}>
+        <LazyTotalBalance sum={sum} />
+      </Suspense>
       <div className="balance__container balance__container--gap">
         <Link to="http://localhost:3000/receive">
           <div className="img--white">
-            <div className={`img--round ${click}`}>
+            <div className={`img--round click`}>
               <img
                 src="/../../../svg/receive.svg"
                 className="img"
@@ -39,17 +40,19 @@ export default function Component() {
               />
             </div>
           </div>
-          <p className="name">receive</p>
+          <p className="sign">receive</p>
         </Link>
         <Link to="http://localhost:3000/send">
           <div className="img--white">
-            <div className={`img--round ${click}`}>
+            <div className={`img--round click`}>
               <img src="/../../../svg/send.svg" className="img" alt="send" />
             </div>
           </div>
-          <p className="name">send</p>
+          <p className="sign">send</p>
         </Link>
       </div>
     </Fragment>
   );
 }
+
+export default memo(Component);

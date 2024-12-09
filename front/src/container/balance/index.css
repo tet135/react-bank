@@ -1,0 +1,51 @@
+.total__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+.total {
+    color: #1D1D1F;
+    font-size: 38px;
+    font-weight: 700;
+    /* for skeleton */
+    height:  38px;
+    /* width: 100px; */
+}
+
+.total__coins {
+    color: #403f43;
+    font-size: 38px;
+    font-weight: 500;
+}
+
+.card__container:hover {
+    background-color: #F7F7F7;
+}
+   
+
+
+.transaction__sum {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 16px;
+    /* height for skeleton */
+    height: 16px;
+}
+
+.transaction__dollar {
+    color: #1D1D1F;
+    font-weight: 700;
+}
+
+.transaction__coins {
+    color: #939199;
+}
+
+.transaction__dollar--received,
+.transaction__coins--received {
+    color: #24B277 !important;
+}

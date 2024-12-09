@@ -45,5 +45,3 @@ class Session {
 module.exports = {
   Session,
 }
-
-console.log(Session.generateToken()) //ok
